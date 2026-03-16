@@ -2,7 +2,7 @@
 
 ## Project info
 
-**URL**: https://gomahub.com
+**URL pour le domaine que nous allons acheter pour ce site**: https://gomahub.com
 
 **Project**: GOMA HUB WEB3 - Innovation Center in DR Congo
 
@@ -66,12 +66,6 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
-
-## How can I deploy this project?
-
-Contact our development team for deployment assistance. We provide comprehensive deployment support for GOMA HUB WEB3 projects.
-
-## Can I connect a custom domain to my GOMA HUB WEB3 project?
 
 Yes, you can!
 
