@@ -67,8 +67,5 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
-Yes, you can!
-
-To connect a domain, contact our development team. We provide full domain configuration support for GOMA HUB WEB3 projects.
 
 Read more about our services: [GOMA HUB WEB3 Domain Services](https://gomahub.com/services/custom-domain)
