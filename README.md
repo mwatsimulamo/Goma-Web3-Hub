@@ -67,5 +67,4 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
-
 Read more about our services: [GOMA HUB WEB3 Domain Services](https://gomahub.com/services/custom-domain)
