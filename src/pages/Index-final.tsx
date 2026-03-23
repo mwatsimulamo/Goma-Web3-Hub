@@ -107,7 +107,7 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
       {/* Hero avec vidéo YouTube en arrière-plan */}
       <section className="relative min-h-[90vh] flex items-center overflow-hidden pt-20" ref={heroRef}>
         <div className="absolute inset-0">
@@ -205,11 +205,11 @@ const Index = () => {
                     }`} />
                     <div 
                       ref={elementRef}
-                      className="text-4xl font-bold mb-2 text-gray-900"
+                      className="text-4xl font-bold mb-2 text-card-foreground"
                     >
                       {count}{stat.suffix}
                     </div>
-                    <div className="text-sm font-medium text-gray-600">{stat.label}</div>
+                    <div className="text-sm font-medium text-muted-foreground">{stat.label}</div>
                   </ModernCard>
                 </motion.div>
               );
@@ -228,10 +228,10 @@ const Index = () => {
             viewport={{ once: true }}
             className="text-center"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-8 text-gray-900">
+            <h2 className="text-4xl md:text-5xl font-bold mb-8 text-foreground">
               <div className="text-orange-600">Innovation Technologique Locale</div>
             </h2>
-            <p className="text-xl leading-relaxed mb-8 text-gray-600">
+            <p className="text-xl leading-relaxed mb-8 text-muted-foreground">
               <div className="text-orange-500 mb-4">UJUZI Labs est un centre d'innovation dédié au développement des technologies blockchain en RD Congo</div>
               <div className="text-orange-400 mb-4">créant des opportunités pour la jeunesse locale</div>
               <div className="text-orange-600">avec un focus sur l'impact social et économique durable</div>
@@ -252,7 +252,7 @@ const Index = () => {
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-gray-900">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-foreground">
             <div className="text-orange-600">Événements à venir</div>
           </h2>
           
@@ -283,26 +283,26 @@ const Index = () => {
                   </div>
                   
                   <div className="event-content">
-                    <h3 className="text-2xl font-bold mb-4 text-gray-900">{event.title}</h3>
+                    <h3 className="text-2xl font-bold mb-4 text-card-foreground">{event.title}</h3>
                     
                     {/* Description complète de l'événement */}
                     <div className="event-description">
-                      <p className="text-gray-600 mb-4 leading-relaxed">
+                      <p className="text-muted-foreground mb-4 leading-relaxed">
                         {event.fullDescription}
                       </p>
                     </div>
                     
                     {/* Informations pratiques */}
                     <div className="space-y-3 mb-6">
-                      <p className="flex items-center gap-2 text-gray-600">
+                      <p className="flex items-center gap-2 text-muted-foreground">
                         <Calendar className="h-4 w-4 text-orange-500" />
                         <span className="text-orange-600">{event.date}</span>
                       </p>
-                      <p className="flex items-center gap-2 text-gray-600">
+                      <p className="flex items-center gap-2 text-muted-foreground">
                         <MapPin className="h-4 w-4 text-red-500" />
-                        <span className="text-gray-900">{event.location}</span>
+                        <span className="text-card-foreground">{event.location}</span>
                       </p>
-                      <p className="flex items-center gap-2 text-gray-600">
+                      <p className="flex items-center gap-2 text-muted-foreground">
                         <Zap className="h-4 w-4 text-orange-500" />
                         <span className="text-orange-600">{event.time}</span>
                       </p>
@@ -336,7 +336,7 @@ const Index = () => {
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-gray-900">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-foreground">
             <div className="text-orange-600">Projets Innovants</div>
           </h2>
           
@@ -357,8 +357,8 @@ const Index = () => {
                   }`}>
                     {project.category}
                   </div>
-                  <h3 className="text-2xl font-bold mb-4 text-gray-900">{project.name}</h3>
-                  <p className="leading-relaxed text-gray-600">{project.description}</p>
+                  <h3 className="text-2xl font-bold mb-4 text-card-foreground">{project.name}</h3>
+                  <p className="leading-relaxed text-muted-foreground">{project.description}</p>
                 </ModernCard>
               </motion.div>
             ))}
@@ -377,7 +377,7 @@ const Index = () => {
         >
           <div className="mb-12">
             <img src="/logo.png" alt="UJUZI Labs" className="h-16 mx-auto mb-6" />
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
               <div className="text-orange-600">Partenaires Stratégiques</div>
             </h2>
           </div>
@@ -392,7 +392,7 @@ const Index = () => {
                 viewport={{ once: true }}
               >
                 <ModernCard className="px-6 py-4">
-                  <span className="text-lg font-bold text-gray-900">
+                  <span className="text-lg font-bold text-card-foreground">
                     {partner}
                   </span>
                 </ModernCard>

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Github, Twitter, MessageCircle, Send, Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
+import { IconDiscord, IconGitHub, IconTelegram, IconX } from "./FooterSocialIcons";
 
 const Footer = () => {
   const { t } = useTranslation();
@@ -55,36 +56,36 @@ const Footer = () => {
               {t("footer.connect")}
             </h4>
             <div className="flex flex-col gap-4">
-              <div className="flex gap-3">
-                <a 
-                  href="#" 
-                  className="p-2 rounded-lg bg-card border border-border hover:border-primary hover:bg-accent transition-all duration-200 text-muted-foreground hover:text-primary"
-                  aria-label="Twitter"
+              <div className="flex flex-wrap gap-3">
+                <a
+                  href="#"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[#000000] text-white shadow-sm ring-1 ring-black/10 dark:ring-white/20 transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  aria-label="X"
                 >
-                  <Twitter className="h-4 w-4" />
+                  <IconX className="h-[18px] w-[18px]" />
                 </a>
-                <a 
-                  href="#" 
-                  className="p-2 rounded-lg bg-card border border-border hover:border-primary hover:bg-accent transition-all duration-200 text-muted-foreground hover:text-primary"
+                <a
+                  href="#"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[#5865F2] text-white shadow-sm transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   aria-label="Discord"
                 >
-                  <MessageCircle className="h-4 w-4" />
+                  <IconDiscord className="h-[22px] w-[22px]" />
                 </a>
-                <a 
-                  href="https://t.me/CardanoGomaCommunity" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="p-2 rounded-lg bg-card border border-border hover:border-primary hover:bg-accent transition-all duration-200 text-muted-foreground hover:text-primary"
+                <a
+                  href="https://t.me/CardanoGomaCommunity"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[#26A5E4] text-white shadow-sm transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   aria-label="Telegram"
                 >
-                  <Send className="h-4 w-4" />
+                  <IconTelegram className="h-[22px] w-[22px]" />
                 </a>
-                <a 
-                  href="#" 
-                  className="p-2 rounded-lg bg-card border border-border hover:border-primary hover:bg-accent transition-all duration-200 text-muted-foreground hover:text-primary"
+                <a
+                  href="#"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[#24292F] text-white shadow-sm transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   aria-label="GitHub"
                 >
-                  <Github className="h-4 w-4" />
+                  <IconGitHub className="h-[22px] w-[22px]" />
                 </a>
               </div>
               <div className="space-y-2">

@@ -5,35 +5,39 @@
 @tailwind utilities;
 
 @layer base {
+  /* Thème clair (défaut) : texte foncé sur fond clair — lisibilité WCAG-friendly */
   :root {
-    /* UJUZI — fond noir, accent #FF4500, cartes blanches */
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
+    color-scheme: light;
+
+    --background: 210 40% 98%;
+    --foreground: 223 48% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 7%;
+    --card-foreground: 223 48% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 7%;
+    --popover-foreground: 223 48% 12%;
 
-    --primary: 16 100% 50%;
-    --primary-foreground: 0 0% 100%;
+    /* Jaune du logo, assombri pour rester lisible sur fond clair */
+    --primary: 54 72% 36%;
+    --primary-foreground: 0 0% 8%;
 
-    --secondary: 0 0% 12%;
-    --secondary-foreground: 0 0% 96%;
+    --secondary: 220 26% 95%;
+    --secondary-foreground: 223 48% 12%;
 
-    --muted: 0 0% 16%;
-    --muted-foreground: 0 0% 68%;
+    --muted: 220 22% 95%;
+    --muted-foreground: 222 28% 28%;
 
-    --accent: 16 30% 14%;
-    --accent-foreground: 16 100% 55%;
+    /* Bleu du logo pour les textes d'accent en mode clair */
+    --accent: 221 60% 94%;
+    --accent-foreground: 221 67% 38%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 22%;
-    --input: 0 0% 18%;
-    --ring: 16 100% 50%;
+    --border: 221 20% 86%;
+    --input: 221 20% 86%;
+    --ring: 221 67% 42%;
 
     --radius: 0.75rem;
 
@@ -41,40 +45,54 @@
     --glow-purple: 16 80% 45%;
     --surface-glass: 0 0% 100%;
 
-    --sidebar-background: 0 0% 4%;
-    --sidebar-foreground: 0 0% 96%;
-    --sidebar-primary: 16 100% 50%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 14%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 0 0% 18%;
-    --sidebar-ring: 16 100% 50%;
+    --sidebar-background: 210 40% 97%;
+    --sidebar-foreground: 223 48% 12%;
+    --sidebar-primary: 54 72% 36%;
+    --sidebar-primary-foreground: 0 0% 8%;
+    --sidebar-accent: 220 14% 94%;
+    --sidebar-accent-foreground: 223 48% 12%;
+    --sidebar-border: 220 13% 88%;
+    --sidebar-ring: 221 67% 42%;
 
     --ujuzi-orange: #ff4500;
-    --ujuzi-border-subtle: rgba(255, 255, 255, 0.1);
+    --ujuzi-border-subtle: rgba(0, 0, 0, 0.08);
   }
 
   .dark {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
+    color-scheme: dark;
+
+    --background: 0 0% 5%;
+    --foreground: 0 0% 98%;
+
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 7%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 7%;
+    --card-foreground: 224 71% 6%;
+
+    --popover: 0 0% 9%;
+    --popover-foreground: 0 0% 98%;
+
     --primary: 16 100% 50%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 12%;
+
+    --secondary: 0 0% 14%;
     --secondary-foreground: 0 0% 96%;
+
     --muted: 0 0% 16%;
-    --muted-foreground: 0 0% 68%;
-    --accent: 16 30% 14%;
-    --accent-foreground: 16 100% 55%;
-    --border: 0 0% 22%;
+    --muted-foreground: 220 9% 72%;
+
+    --accent: 16 32% 14%;
+    --accent-foreground: 16 100% 58%;
+
+    --destructive: 0 62% 48%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 20%;
     --input: 0 0% 18%;
     --ring: 16 100% 50%;
+
     --glow: 16 100% 50%;
     --glow-purple: 16 80% 45%;
     --surface-glass: 0 0% 100%;
+
     --sidebar-background: 0 0% 4%;
     --sidebar-foreground: 0 0% 96%;
     --sidebar-primary: 16 100% 50%;
@@ -83,26 +101,8 @@
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 0 0% 18%;
     --sidebar-ring: 16 100% 50%;
-  }
 
-  .light {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 7%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 7%;
-    --primary: 16 100% 50%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 12%;
-    --secondary-foreground: 0 0% 96%;
-    --muted: 0 0% 16%;
-    --muted-foreground: 0 0% 68%;
-    --accent: 16 30% 14%;
-    --accent-foreground: 16 100% 55%;
-    --border: 0 0% 22%;
-    --input: 0 0% 18%;
-    --ring: 16 100% 50%;
+    --ujuzi-border-subtle: rgba(255, 255, 255, 0.12);
   }
 }
 
@@ -137,9 +137,15 @@
 
 @layer utilities {
   .glass {
-    background: rgba(255, 255, 255, 0.06);
     backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.88);
     border: 1px solid var(--ujuzi-border-subtle);
+    color: hsl(var(--foreground));
+  }
+
+  .dark .glass {
+    background: rgba(255, 255, 255, 0.06);
+    color: hsl(var(--foreground));
   }
 
   /* Cartes de contenu (pages sous main, hors accueil isolé) */
@@ -186,6 +192,12 @@
 
   .glow-text {
     text-shadow:
+      0 0 24px rgba(255, 69, 0, 0.35),
+      0 0 48px rgba(255, 69, 0, 0.12);
+  }
+
+  .dark .glow-text {
+    text-shadow:
       0 0 20px rgba(255, 69, 0, 0.45),
       0 0 40px rgba(255, 69, 0, 0.2);
   }
@@ -195,6 +207,13 @@
   }
 
   .gradient-text {
+    background: linear-gradient(135deg, #0f1e42 0%, #1f4fa8 52%, #c9b02f 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .dark .gradient-text {
     background: linear-gradient(135deg, #ffffff 0%, #ff4500 55%, #ff6b35 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -203,12 +222,25 @@
 
   .grid-pattern {
     background-image:
-      linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+      linear-gradient(rgba(0, 0, 0, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
     background-size: 60px 60px;
   }
 
+  .dark .grid-pattern {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  }
+
   .hero-gradient {
+    background:
+      radial-gradient(ellipse 90% 80% at 50% -30%, rgba(255, 69, 0, 0.18) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 40% at 90% 20%, rgba(255, 69, 0, 0.06) 0%, transparent 45%),
+      hsl(40 20% 98%);
+  }
+
+  .dark .hero-gradient {
     background:
       radial-gradient(ellipse 90% 80% at 50% -30%, rgba(255, 69, 0, 0.22) 0%, transparent 55%),
       radial-gradient(ellipse 60% 40% at 90% 20%, rgba(255, 69, 0, 0.08) 0%, transparent 45%),

@@ -1,9 +1,11 @@
+import type { ReactElement } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import Layout from "./components/Layout";
 import Index from "./pages/Index-final";
 import About from "./pages/About";
@@ -24,6 +26,20 @@ import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+
+const AdminRoute = ({ children }: { children: ReactElement }) => {
+  const { user, isAdmin, loading } = useAuth();
+
+  if (loading) {
+    return <div className="min-h-[70vh] flex items-center justify-center text-muted-foreground">Loading...</div>;
+  }
+
+  if (!user || !isAdmin) {
+    return <Navigate to="/admin/login" replace />;
+  }
+
+  return children;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -49,7 +65,14 @@ const App = () => (
               <Route path="/documentation" element={<Documentation />} />
               <Route path="/tools" element={<Tools />} />
               <Route path="/admin/login" element={<AdminLogin />} />
-              <Route path="/admin" element={<AdminDashboard />} />
+              <Route
+                path="/admin"
+                element={
+                  <AdminRoute>
+                    <AdminDashboard />
+                  </AdminRoute>
+                }
+              />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>
