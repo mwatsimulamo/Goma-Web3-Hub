@@ -99,11 +99,31 @@ const Index = () => {
   ];
 
   const partners = [
-    "Cardano Foundation", 
-    "Apex Fusion", 
-    "Safrochain", 
-    "UNICEF Innovation", 
-    "Africa Blockchain Institute"
+    {
+      name: "Apex Fusion",
+      logo: "/partners/apex.png",
+      url: "https://apexfusion.com/",
+    },
+    {
+      name: "Wada",
+      logo: "/partners/wada.jpg",
+      url: "https://wada.org/",
+    },
+    {
+      name: "Catalyst",
+      logo: "/partners/Catalyst.jpg",
+      url: "https://projectcatalyst.io/",
+    },
+    {
+      name: "Ekival",
+      logo: "/partners/Ekival.png",
+      url: "https://ekival.com/",
+    },
+    {
+      name: "ISDR-GL",
+      logo: "/partners/partner1.png",
+      url: "https://isdrgl.com",
+    },
   ];
 
   return (
@@ -381,23 +401,32 @@ const Index = () => {
               <div className="text-orange-600">Partenaires Stratégiques</div>
             </h2>
           </div>
-          
-          <div className="flex flex-wrap justify-center gap-8 items-center">
-            {partners.map((partner, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: i * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <ModernCard className="px-6 py-4">
-                  <span className="text-lg font-bold text-card-foreground">
-                    {partner}
-                  </span>
-                </ModernCard>
-              </motion.div>
-            ))}
+
+          <div className="relative overflow-hidden bg-gradient-to-r from-transparent via-white/5 to-transparent py-8">
+            <div className="flex animate-scroll">
+              {[...partners, ...partners].map((partner, i) => (
+                <div
+                  key={`${partner.name}-${i}`}
+                  className="flex flex-col items-center min-w-[200px] max-w-[220px] mx-4 flex-shrink-0"
+                >
+                  <a
+                    href={partner.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex flex-col items-center"
+                    aria-label={`Visiter le site de ${partner.name}`}
+                  >
+                    <img
+                      src={partner.logo}
+                      alt={partner.name}
+                      className="h-16 w-auto object-contain"
+                      style={{ maxWidth: 160 }}
+                      loading="lazy"
+                    />
+                  </a>
+                </div>
+              ))}
+            </div>
           </div>
         </motion.div>
       </ModernSectionWrapper>

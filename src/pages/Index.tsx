@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ArrowRight, Users, Calendar, Rocket, Award, ChevronRight, MapPin } from "lucide-react";
+import { ArrowRight, Users, Calendar, Rocket, Award, ChevronRight, MapPin, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import CustomButton from "@/components/ui/CustomButton";
@@ -66,7 +66,41 @@ const Index = () => {
     { name: "VolcanoDAO", category: "Social Impact", description: t("projects.proj3Desc") },
   ];
 
-  const partners = ["Cardano Foundation", "Apex Fusion", "Safrochain", "UNICEF Innovation", "Africa Blockchain Institute"];
+  const partners = [
+    {
+      name: "Apex Fusion",
+      logo: "/partners/apex.png",
+      description: "Apex Fusion",
+      url: "https://apexfusion.com/",
+    },
+    {
+      name: "Wada",
+      logo: "/partners/wada.jpg",
+      description:
+        "Organisation et d'un incubateur communautaire axé sur l'adoption de la blockchain Cardano et de l'intelligence artificielle en Afrique.",
+      url: "https://wada.org/",
+    },
+    {
+      name: "Catalyst",
+      logo: "/partners/Catalyst.jpg",
+      description:
+        "Project Catalyst is the world’s largest decentralized innovation engine for solving real-world challenges.",
+      url: "https://projectcatalyst.io/",
+    },
+    {
+      name: "Ekival",
+      logo: "/partners/Ekival.png",
+      description:
+        "Solution pour le global pair à pair transfert d'argent et de cryptomonnaies",
+      url: "https://ekival.com/",
+    },
+    {
+      name: "ISDR-GL",
+      logo: "/partners/partner1.png",
+      description: "ISDR-GL - Development Rural",
+      url: "https://isdrgl.com",
+    },
+  ];
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -243,17 +277,35 @@ const Index = () => {
         <SectionHeading 
           title={t("home.partnersTitle")}
         />
-        <div className="flex flex-wrap justify-center gap-8 items-center">
-          {partners.map((partner, i) => (
-            <motion.div 
-              key={i} 
-              {...fadeInUpVariants} 
-              transition={{ ...fadeInUpVariants.transition, delay: i * 0.1 }} 
-              className="px-6 py-3 rounded-lg bg-white border border-gray-100 text-sm font-display font-medium text-muted-foreground"
-            >
-              {partner}
-            </motion.div>
-          ))}
+        <div className="relative overflow-hidden bg-gradient-to-r from-transparent via-white/5 to-transparent py-8">
+          <div className="flex animate-scroll">
+            {[...partners, ...partners].map((partner, i) => (
+              <div
+                key={`${partner.name}-${i}`}
+                className="flex flex-col items-center min-w-[200px] max-w-[220px] mx-4 flex-shrink-0"
+              >
+                <img
+                  src={partner.logo}
+                  alt={partner.name}
+                  className="h-16 w-auto object-contain mb-3"
+                  style={{ maxWidth: 160 }}
+                  loading="lazy"
+                />
+                <div className="text-center text-sm text-muted-foreground mb-2 font-medium">
+                  {partner.description}
+                </div>
+                <a
+                  href={partner.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline flex items-center gap-1 text-xs"
+                >
+                  <span>Visit website</span>
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              </div>
+            ))}
+          </div>
         </div>
       </SectionWrapper>
 
