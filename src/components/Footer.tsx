@@ -58,7 +58,7 @@ const Footer = () => {
             <div className="flex flex-col gap-4">
               <div className="flex flex-wrap gap-3">
                 <a
-                  href="#"
+                  href="https://x.com/StakeGoma"
                   className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[#000000] text-white shadow-sm ring-1 ring-black/10 dark:ring-white/20 transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   aria-label="X"
                 >
