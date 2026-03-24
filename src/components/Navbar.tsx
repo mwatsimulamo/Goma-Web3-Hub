@@ -26,6 +26,7 @@ const Navbar = () => {
       label: "nav.about",
       items: [
         { key: "presentation", path: "/about" },
+        { key: "services", path: "/about#services" },
         { key: "team", path: "/about#team" },
         { key: "partners", path: "/partners" },
         { key: "contact", path: "/contact" },

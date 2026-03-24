@@ -3,6 +3,7 @@
     "home": "Accueil",
     "about": "À propos",
     "presentation": "Présentation",
+    "services": "Services",
     "team": "Équipe",
     "ecosystem": "Écosystème",
     "events": "Événements",
@@ -187,7 +188,38 @@
     "impactTitle": "Impact",
     "impactDesc": "Ce programme améliore la rétention des membres, accélère l'apprentissage pratique et augmente le nombre de participants qui passent à l'action sur des projets concrets.",
     "donateTitle": "Donate",
-    "donateDesc": "Vos contributions nous permettent de financer les sessions d'introduction, les supports pédagogiques et l'accompagnement des nouveaux participants."
+    "donateDesc": "Vos contributions nous permettent de financer les sessions d'introduction, les supports pédagogiques et l'accompagnement des nouveaux participants.",
+    "storyText": "Depuis 2023, Ujuzi Labs a identifié un besoin d'éducation sur le Web3, et la blockchain Cardano en particulier. Cela nous a poussé à initier ce programme à travers lequel, chaque fin du mois, nous mobilisons nos petites ressources disponibles et recrutons des jeunes entrepreneurs, étudiants et passionnés de technologie pour leur offrir une formation d'une semaine sur des notions comme le Web3, la technologie des registres distribués, la blockchain, les portefeuilles Cardano et d'autres fondamentaux utiles à leur parcours.",
+    "stats": {
+      "cohorts": "Cohortes",
+      "trained": "Personnes formées",
+      "resources": "Ressources créées",
+      "hub": "Hub Cardano initié à Goma"
+    },
+    "testimonials": {
+      "title": "Témoignages des participants",
+      "subtitle": "Espace réservé aux retours des personnes qui ont participé au programme.",
+      "placeholder": "Témoignage à ajouter...",
+      "photoPlaceholder": "Photo du témoin à ajouter",
+      "namePlaceholder": "Nom du témoin à ajouter",
+      "videoPlaceholder": "Lien vidéo à ajouter",
+      "watchVideo": "Voir la vidéo"
+    },
+    "donateJustification": "Votre soutien permet de maintenir ce programme vivant : location d'espaces, connexion internet, supports de formation, accompagnement des apprenants et suivi post-formation. Chaque contribution, même petite, renforce l'impact réel sur la jeunesse locale.",
+    "mobileMoneyButton": "Via Mobile Money",
+    "cryptoButton": "Via Crypto",
+    "ideaTitle": "Parle-nous de votre idée",
+    "ideaDesc": "Vous avez une proposition de collaboration, de sponsorisation ou un concept à développer avec Ujuzi Labs ? Vous pouvez aussi proposer des pistes pour l'amélioration du programme Onboarding, l'intégration de nouveaux sujets de formation et de nouvelles activités pratiques. Partagez-nous votre idée via notre formulaire.",
+    "ideaCta": "Aller au formulaire de contact",
+    "mobileNetworksTitle": "Réseaux disponibles",
+    "mobile": {
+      "orange": "Orange Money",
+      "airtel": "Airtel Money",
+      "mpesa": "M-PESA"
+    },
+    "cryptoTitle": "Via Crypto (Cardano)",
+    "cryptoHow": "Connecte ton wallet Cardano, choisis le montant de ton soutien, puis confirme la transaction. Une fois validé, ta contribution sera prise en compte pour financer les prochaines cohortes.",
+    "donateButton": "Donate"
   },
   "blog": {
     "title": "Blog & Actualités",
@@ -295,6 +327,10 @@
     "quickLinks": "Liens rapides",
     "resources": "Ressources",
     "connect": "Connecter",
+    "newsletter": "Newsletter",
+    "newsletterCta": "Abonnez-vous à notre newsletter",
+    "newsletterNamePlaceholder": "Votre nom",
+    "newsletterEmailPlaceholder": "Votre email",
     "rights": "Tous droits réservés."
   },
   "admin": {

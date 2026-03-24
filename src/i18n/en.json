@@ -3,6 +3,7 @@
     "home": "Home",
     "about": "About",
     "presentation": "Presentation",
+    "services": "Services",
     "team": "Team",
     "ecosystem": "Ecosystem",
     "events": "Events",
@@ -187,7 +188,38 @@
     "impactTitle": "Impact",
     "impactDesc": "This program improves member retention, speeds up practical learning, and increases the number of participants who move into real project execution.",
     "donateTitle": "Donate",
-    "donateDesc": "Your contributions help us fund intro sessions, learning resources, and onboarding support for new participants."
+    "donateDesc": "Your contributions help us fund intro sessions, learning resources, and onboarding support for new participants.",
+    "storyText": "Since 2023, Ujuzi Labs identified a strong need for Web3 education, especially around the Cardano blockchain. This led us to launch this program, through which at the end of each month we mobilize our limited resources and recruit young entrepreneurs, students, and technology enthusiasts to provide a one-week training on topics such as Web3, distributed ledger technology, blockchain, Cardano wallets, and other practical foundations for their journey.",
+    "stats": {
+      "cohorts": "Cohorts",
+      "trained": "People trained",
+      "resources": "Resources created",
+      "hub": "Cardano hub initiated in Goma"
+    },
+    "testimonials": {
+      "title": "Participant Testimonials",
+      "subtitle": "Reserved area for feedback from people who joined the program.",
+      "placeholder": "Testimonial to add...",
+      "photoPlaceholder": "Participant photo to add",
+      "namePlaceholder": "Participant name to add",
+      "videoPlaceholder": "Video link to add",
+      "watchVideo": "Watch video"
+    },
+    "donateJustification": "Your support helps keep this program alive: venue access, internet connectivity, learning materials, learner support, and post-training follow-up. Every contribution, even small, strengthens real impact for local youth.",
+    "mobileMoneyButton": "Via Mobile Money",
+    "cryptoButton": "Via Crypto",
+    "ideaTitle": "Tell us your idea",
+    "ideaDesc": "Do you have a collaboration proposal, sponsorship idea, or concept to build with Ujuzi Labs? You can also suggest improvements to the Onboarding Program, integration of new training topics, and new practical activities. Share your idea through our form.",
+    "ideaCta": "Go to contact form",
+    "mobileNetworksTitle": "Available networks",
+    "mobile": {
+      "orange": "Orange Money",
+      "airtel": "Airtel Money",
+      "mpesa": "M-PESA"
+    },
+    "cryptoTitle": "Via Crypto (Cardano)",
+    "cryptoHow": "Connect your Cardano wallet, choose the amount you want to contribute, then confirm the transaction. Once validated, your contribution will support upcoming cohorts.",
+    "donateButton": "Donate"
   },
   "blog": {
     "title": "Blog & News",
@@ -295,6 +327,10 @@
     "quickLinks": "Quick Links",
     "resources": "Resources",
     "connect": "Connect",
+    "newsletter": "Newsletter",
+    "newsletterCta": "Subscribe to our newsletter",
+    "newsletterNamePlaceholder": "Your name",
+    "newsletterEmailPlaceholder": "Your email",
     "rights": "All rights reserved."
   },
   "admin": {

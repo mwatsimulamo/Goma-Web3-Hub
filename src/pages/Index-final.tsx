@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ArrowRight, Users, Calendar, Rocket, Award, MapPin, Star, Zap, Globe, Heart } from "lucide-react";
+import { ArrowRight, Users, Calendar, Rocket, Award, MapPin, Star, Zap, Globe } from "lucide-react";
 import ModernButton from "@/components/ui/ModernButton";
 import ModernCard from "@/components/ui/ModernCard";
 import ModernSectionWrapper from "@/components/ui/ModernSectionWrapper";
@@ -430,38 +430,6 @@ const Index = () => {
           </div>
         </motion.div>
       </ModernSectionWrapper>
-
-      {/* Newsletter */}
-      <section className="py-24 bg-gradient-to-r from-orange-500 to-orange-600">
-        <Container size="md">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center"
-          >
-            <Heart className="h-12 w-12 mx-auto mb-6 text-white" />
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">
-              <div className="text-white">Restez Connecté</div>
-            </h2>
-            <p className="text-xl mb-8 text-white/90">
-              <div className="text-white">Recevez les dernières nouvelles sur nos événements UJUZI Labs et opportunités</div>
-            </p>
-            
-            <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="votre@email.com"
-                className="flex-1 px-6 py-4 rounded-xl focus:outline-none focus:ring-4 focus:ring-white/30 text-gray-900 placeholder-gray-500"
-              />
-              <ModernButton variant="secondary" size="lg" className="bg-white text-orange-600 hover:bg-gray-100">
-                S'abonner
-              </ModernButton>
-            </form>
-          </motion.div>
-        </Container>
-      </section>
 
       {/* Modal d'inscription aux événements */}
       <EventRegistrationModal 

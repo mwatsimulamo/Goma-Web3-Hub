@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
   HeartHandshake,
@@ -7,8 +8,7 @@ import {
   HandCoins,
   Smartphone,
   Wallet,
-  ChevronLeft,
-  ChevronRight,
+  PlayCircle,
 } from "lucide-react";
 import { useCountUp } from "@/hooks/useCountUp";
 
@@ -47,26 +47,33 @@ const OnboardingProgram = () => {
     "/onboarding/onboarding-5.jpg",
     "/onboarding/onboarding-6.jpg",
   ];
+  const testimonials = [
+    {
+      name: "Olivier M.",
+      photo: "/onboarding/testimonials/testimonial-1.png",
+      videoUrl: "https://www.youtube.com/watch?v=AERCr9821Ig&t=11s",
+    },
+    {
+      name: "Olivier M.",
+      photo: "/onboarding/testimonials/testimonial-1.png",
+      videoUrl: "https://www.youtube.com/watch?v=AERCr9821Ig&t=11s",
+    },
+    {
+      name: "Olivier M.",
+      photo: "/onboarding/testimonials/testimonial-1.png",
+      videoUrl: "https://www.youtube.com/watch?v=AERCr9821Ig&t=11s",
+    },
+  ];
 
   useEffect(() => {
     if (isPaused) return;
 
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % onboardingImages.length);
-    }, 2600);
+    }, 2200);
 
     return () => clearInterval(interval);
   }, [onboardingImages.length, isPaused]);
-
-  const showNext = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % onboardingImages.length);
-  };
-
-  const showPrevious = () => {
-    setCurrentImageIndex((prev) =>
-      prev === 0 ? onboardingImages.length - 1 : prev - 1
-    );
-  };
 
   return (
     <div>
@@ -90,12 +97,12 @@ const OnboardingProgram = () => {
             {...fadeUp}
             className="glass rounded-xl p-8 scroll-mt-28"
           >
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center justify-center gap-3 mb-6 text-center">
               <HeartHandshake className="h-6 w-6 text-primary" />
               <h2 className="font-display text-2xl font-bold">{t("onboarding.whatTitle")}</h2>
             </div>
             <div
-              className="relative rounded-xl overflow-hidden border border-border min-h-[430px]"
+              className="relative rounded-2xl overflow-hidden border border-border min-h-[520px] lg:min-h-[620px]"
               onMouseEnter={() => setIsPaused(true)}
               onMouseLeave={() => setIsPaused(false)}
             >
@@ -132,49 +139,17 @@ const OnboardingProgram = () => {
                 )}
               </AnimatePresence>
 
-              <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/55 to-black/45" />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/45 via-black/30 to-black/20" />
 
-              <div className="relative z-10 p-7 md:p-10 max-w-4xl">
-                <p className="text-white/95 leading-relaxed text-justify text-base md:text-lg">
-                  Depuis 2023, Ujuzi Labs a identifié un besoin d&apos;éducation sur le Web3, et la blockchain Cardano en particulier.
-                  Cela nous a poussé à initier ce programme à travers lequel, chaque fin du mois, nous mobilisons nos petites ressources
-                  disponibles et recrutons des jeunes entrepreneurs, étudiants et passionnés de technologie pour leur offrir une
-                  formation d&apos;une semaine sur des notions comme le Web3, la technologie des registres distribués, la blockchain,
-                  les portefeuilles Cardano et d&apos;autres fondamentaux utiles à leur parcours.
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={showPrevious}
-                className="absolute left-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-black/45 text-white backdrop-blur-sm hover:bg-black/65 transition z-20"
-                aria-label="Image précédente"
-              >
-                <ChevronLeft className="h-5 w-5 mx-auto" />
-              </button>
-              <button
-                type="button"
-                onClick={showNext}
-                className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-black/45 text-white backdrop-blur-sm hover:bg-black/65 transition z-20"
-                aria-label="Image suivante"
-              >
-                <ChevronRight className="h-5 w-5 mx-auto" />
-              </button>
-
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 z-20">
-                {onboardingImages.map((_, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => setCurrentImageIndex(idx)}
-                    className={`h-2.5 rounded-full transition-all ${
-                      idx === currentImageIndex
-                        ? "w-6 bg-white"
-                        : "w-2.5 bg-white/50 hover:bg-white/80"
-                    }`}
-                    aria-label={`Afficher image ${idx + 1}`}
-                  />
-                ))}
+              <div className="relative z-10 h-full flex items-start justify-end p-5 md:p-7 lg:p-8">
+                <div className="max-w-md bg-white/12 backdrop-blur-sm rounded-2xl py-4 px-4 md:py-5 md:px-5 shadow-[0_14px_40px_rgba(0,0,0,0.22)]">
+                  <p
+                    className="font-display leading-relaxed text-justify text-sm md:text-base lg:text-lg font-medium"
+                    style={{ color: "#ffffff" }}
+                  >
+                    {t("onboarding.storyText")}
+                  </p>
+                </div>
               </div>
             </div>
           </motion.div>
@@ -185,15 +160,76 @@ const OnboardingProgram = () => {
             transition={{ ...fadeUp.transition, delay: 0.08 }}
             className="glass rounded-xl p-8 scroll-mt-28"
           >
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center justify-center gap-3 mb-6 text-center">
               <TrendingUp className="h-6 w-6 text-primary" />
               <h2 className="font-display text-2xl font-bold">{t("onboarding.impactTitle")}</h2>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <ImpactStat value={20} suffix="+" label="Cohortes" />
-              <ImpactStat value={400} suffix="+" label="Personnes formées" />
-              <ImpactStat value={20} suffix="+" label="Ressources créées" />
-              <ImpactStat value={1} label="Hub Cardano initié à Goma" />
+              <ImpactStat value={20} suffix="+" label={t("onboarding.stats.cohorts")} />
+              <ImpactStat value={400} suffix="+" label={t("onboarding.stats.trained")} />
+              <ImpactStat value={20} suffix="+" label={t("onboarding.stats.resources")} />
+              <ImpactStat value={1} label={t("onboarding.stats.hub")} />
+            </div>
+
+            <div className="mt-8 rounded-2xl border border-border bg-secondary/20 p-6 md:p-7">
+              <h3 className="font-display text-xl font-semibold mb-2 text-center">
+                {t("onboarding.testimonials.title")}
+              </h3>
+              <p className="text-muted-foreground text-center mb-4">
+                {t("onboarding.testimonials.subtitle")}
+              </p>
+              <div className="grid md:grid-cols-3 gap-4">
+                {testimonials.map((item, idx) => {
+                  const isNamePlaceholder = item.name.startsWith("TO_ADD_");
+                  const isVideoPlaceholder = item.videoUrl.startsWith("TO_ADD_");
+
+                  return (
+                    <div
+                      key={idx}
+                      className="rounded-xl border border-border/70 bg-background/60 p-4"
+                    >
+                      <div className="w-full aspect-square rounded-lg overflow-hidden bg-secondary/40 mb-3 flex items-center justify-center text-xs text-muted-foreground text-center px-2">
+                        <img
+                          src={item.photo}
+                          alt={isNamePlaceholder ? t("onboarding.testimonials.photoPlaceholder") : item.name}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                          onError={(e) => {
+                            const target = e.currentTarget;
+                            target.style.display = "none";
+                            const fallback = target.nextElementSibling as HTMLElement | null;
+                            if (fallback) fallback.style.display = "flex";
+                          }}
+                        />
+                        <div style={{ display: "none" }}>
+                          {t("onboarding.testimonials.photoPlaceholder")}
+                        </div>
+                      </div>
+
+                      <p className="font-medium text-foreground text-center mb-3">
+                        {isNamePlaceholder ? t("onboarding.testimonials.namePlaceholder") : item.name}
+                      </p>
+
+                      {isVideoPlaceholder ? (
+                        <div className="inline-flex w-full items-center justify-center gap-2 px-4 py-2 rounded-lg border border-border text-muted-foreground text-sm">
+                          <PlayCircle className="h-4 w-4" />
+                          {t("onboarding.testimonials.videoPlaceholder")}
+                        </div>
+                      ) : (
+                        <a
+                          href={item.videoUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex w-full items-center justify-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition text-sm"
+                        >
+                          <PlayCircle className="h-4 w-4" />
+                          {t("onboarding.testimonials.watchVideo")}
+                        </a>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </motion.div>
 
@@ -203,17 +239,15 @@ const OnboardingProgram = () => {
             transition={{ ...fadeUp.transition, delay: 0.16 }}
             className="glass rounded-xl p-8 scroll-mt-28"
           >
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center justify-center gap-3 mb-6 text-center">
               <HandCoins className="h-6 w-6 text-primary" />
               <h2 className="font-display text-2xl font-bold">{t("onboarding.donateTitle")}</h2>
             </div>
             <p className="text-muted-foreground leading-relaxed mb-6 text-justify">
-              Votre soutien permet de maintenir ce programme vivant : location d&apos;espaces, connexion internet, supports de formation,
-              accompagnement des apprenants et suivi post-formation. Chaque contribution, même petite, renforce l&apos;impact réel sur la
-              jeunesse locale.
+              {t("onboarding.donateJustification")}
             </p>
 
-            <div className="flex flex-wrap gap-3 mb-4">
+            <div className="flex flex-wrap justify-center gap-3 mb-6">
               <button
                 type="button"
                 onClick={() => setDonateMethod("mobile")}
@@ -223,7 +257,7 @@ const OnboardingProgram = () => {
                     : "bg-secondary/30 border-border hover:bg-secondary/60"
                 }`}
               >
-                Via Mobile Money
+                {t("onboarding.mobileMoneyButton")}
               </button>
               <button
                 type="button"
@@ -234,8 +268,25 @@ const OnboardingProgram = () => {
                     : "bg-secondary/30 border-border hover:bg-secondary/60"
                 }`}
               >
-                Via Crypto
+                {t("onboarding.cryptoButton")}
               </button>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-gradient-to-br from-secondary/40 to-secondary/20 p-6 md:p-7 mb-5 shadow-sm">
+              <h3 className="font-display text-xl font-semibold mb-2 text-center">
+                {t("onboarding.ideaTitle")}
+              </h3>
+              <p className="text-muted-foreground mb-5 text-center leading-relaxed">
+                {t("onboarding.ideaDesc")}
+              </p>
+              <div className="flex justify-center">
+                <Link
+                  to="/contact"
+                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition"
+                >
+                  {t("onboarding.ideaCta")}
+                </Link>
+              </div>
             </div>
 
             {donateMethod === "mobile" && (
@@ -246,12 +297,12 @@ const OnboardingProgram = () => {
               >
                 <div className="flex items-center gap-2 mb-3">
                   <Smartphone className="h-5 w-5 text-primary" />
-                  <h3 className="font-display text-lg font-semibold">Réseaux disponibles</h3>
+                  <h3 className="font-display text-lg font-semibold">{t("onboarding.mobileNetworksTitle")}</h3>
                 </div>
                 <ul className="text-muted-foreground space-y-1">
-                  <li>- Orange Money</li>
-                  <li>- Airtel Money</li>
-                  <li>- M-PESA</li>
+                  <li>- {t("onboarding.mobile.orange")}</li>
+                  <li>- {t("onboarding.mobile.airtel")}</li>
+                  <li>- {t("onboarding.mobile.mpesa")}</li>
                 </ul>
               </motion.div>
             )}
@@ -264,18 +315,17 @@ const OnboardingProgram = () => {
               >
                 <div className="flex items-center gap-2 mb-3">
                   <Wallet className="h-5 w-5 text-primary" />
-                  <h3 className="font-display text-lg font-semibold">Via Crypto (Cardano)</h3>
+                  <h3 className="font-display text-lg font-semibold">{t("onboarding.cryptoTitle")}</h3>
                 </div>
                 <p className="text-muted-foreground mb-4">
-                  Connecte ton wallet Cardano, choisis le montant de ton soutien, puis confirme la transaction.
-                  Une fois validé, ta contribution sera prise en compte pour financer les prochaines cohortes.
+                  {t("onboarding.cryptoHow")}
                 </p>
                 <button
                   type="button"
                   className="px-4 py-2 rounded-lg bg-primary text-primary-foreground opacity-80 cursor-not-allowed"
                   disabled
                 >
-                  Donate
+                  {t("onboarding.donateButton")}
                 </button>
               </motion.div>
             )}

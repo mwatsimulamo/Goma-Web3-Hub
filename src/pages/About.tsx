@@ -13,6 +13,12 @@ import {
   Heart,
   Linkedin,
   Twitter,
+  GraduationCap,
+  ServerCog,
+  Code2,
+  FileText,
+  ClipboardList,
+  Leaf,
 } from "lucide-react";
 import ModernButton from "@/components/ui/ModernButton";
 import ModernCard from "@/components/ui/ModernCard";
@@ -23,36 +29,8 @@ import { teamMembers } from "@/data/teamMembers";
 
 const About = () => {
   const { t } = useTranslation();
-
-  const coreValues = [
-    {
-      title: "Innovation Contextuelle",
-      description:
-        "Nous adaptons la technologie (Web3, IA, Agrotech) pour répondre aux défis spécifiques de notre communauté et de notre environnement.",
-      icon: "",
-      color: "#FF6B35",
-    },
-    {
-      title: "Intégrité Technologique",
-      description:
-        "À travers nos opérations de validateurs (Cardano, Apex, Safro), nous prônons la transparence, la sécurité et la décentralisation comme gages de confiance.",
-      color: "#E74C3C",
-    },
-    {
-      title: "Durabilité Régénératrice",
-      description:
-        "Qu'il s'agisse de lignes de code ou de semences maraîchères, chaque projet doit laisser une empreinte positive et durable sur l'environnement de la RDC.",
-      icon: "",
-      color: "#F39C12",
-    },
-    {
-      title: "Empowerment Communautaire",
-      description:
-        "Le savoir ne vaut que s'il est partagé. Notre succès se mesure à la réussite des jeunes que nous formons et à la croissance des projets que nous incubons.",
-      icon: "",
-      color: "#FF6B35",
-    },
-  ];
+  // Remplace ce chemin par ton image de fond About.
+  const aboutHeroBackground = "/about/about.jpg";
 
   const objectives = [
     {
@@ -82,11 +60,87 @@ const About = () => {
   ];
 
   const team = teamMembers;
+  const interventionDomains = [
+    {
+      title: "Education",
+      description:
+        "Programmes d'apprentissage, coaching et accompagnement pour développer les competences pratiques des jeunes et professionnels.",
+      icon: <GraduationCap className="w-8 h-8" />,
+      color: "#ff6b35",
+    },
+    {
+      title: "Nouvelles Technologies",
+      description:
+        "Blockchain, Web3, developpement logiciel et solutions numeriques pour accelerer l'innovation locale et regionale.",
+      icon: <Code2 className="w-8 h-8" />,
+      color: "#60a5fa",
+    },
+    {
+      title: "Environnement",
+      description:
+        "Actions technologiques et communautaires en faveur de la durabilite, de l'agriculture responsable et de la resilience ecologique.",
+      icon: <Leaf className="w-8 h-8" />,
+      color: "#34d399",
+    },
+  ];
+
+  const services = [
+    {
+      title: "Formation sur les nouvelles technologies",
+      description:
+        "Programmes pratiques et sessions intensives sur Web3, blockchain, outils numériques, IA et compétences digitales adaptées aux besoins locaux.",
+      icon: <GraduationCap className="w-8 h-8" />,
+      color: "#ff6b35",
+    },
+    {
+      title: "Opérateur de stake pools",
+      description:
+        "Exploitation et maintenance de nœuds validateurs et stake pools avec supervision continue, bonnes pratiques de sécurité et performance réseau.",
+      icon: <ServerCog className="w-8 h-8" />,
+      color: "#f39c12",
+    },
+    {
+      title: "Développement d'applications, sites web et smart contracts",
+      description:
+        "Conception de solutions digitales complètes : applications web, plateformes métiers, intégration blockchain et développement de contrats intelligents.",
+      icon: <Code2 className="w-8 h-8" />,
+      color: "#22c55e",
+    },
+    {
+      title: "Services de secrétariat",
+      description:
+        "Services professionnels de bureau : impressions, saisie, scan, photocopie de documents, mise en page, préparation de dossiers et archivage.",
+      icon: <FileText className="w-8 h-8" />,
+      color: "#60a5fa",
+    },
+    {
+      title: "Conception et planification des projets",
+      description:
+        "Accompagnement stratégique pour transformer une idée en projet exécutable : cadrage, planification, budget, feuille de route et suivi d'impact.",
+      icon: <ClipboardList className="w-8 h-8" />,
+      color: "#a78bfa",
+    },
+    {
+      title: "Innovation verte et agriculture durable",
+      description:
+        "Intégration de solutions technologiques au service de l'agriculture durable pour renforcer la productivité locale et la résilience communautaire.",
+      icon: <Leaf className="w-8 h-8" />,
+      color: "#34d399",
+    },
+  ];
 
   return (
     <div className="min-h-screen" style={{ background: "var(--dark-bg)" }}>
       {/* Hero Section */}
-      <section className="about-hero">
+      <section
+        className="about-hero"
+        style={{
+          backgroundImage: `linear-gradient(180deg, rgba(8, 16, 30, 0.76) 0%, rgba(12, 24, 44, 0.82) 100%), url('${aboutHeroBackground}')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
         <div className="hero-content">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -200,49 +254,6 @@ const About = () => {
         </Container>
       </section>
 
-      {/* Core Values Section */}
-      <section className="about-section-light">
-        <Container size="lg">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="section-header"
-          >
-            <h2 className="section-title">
-              Nos{" "}
-              <span style={{ color: "var(--accent-orange)" }}>
-                Piliers Fondamentaux
-              </span>
-            </h2>
-            <p className="section-subtitle">
-              Nos actions sont guidées par quatre piliers indissociables qui
-              définissent notre identité et notre approche.
-            </p>
-          </motion.div>
-
-          <div className="values-grid">
-            {coreValues.map((value, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.1 * i }}
-                viewport={{ once: true }}
-                className="value-card"
-              >
-                <span className="value-icon" style={{ color: value.color }}>
-                  {value.icon}
-                </span>
-                <h3 className="value-title">{value.title}</h3>
-                <p className="value-description">{value.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </Container>
-      </section>
-
       {/* Objectives Section */}
       <section className="about-section">
         <Container size="lg">
@@ -278,6 +289,86 @@ const About = () => {
                 <div className="objective-icon">{objective.icon}</div>
                 <h4 className="objective-title">{objective.title}</h4>
                 <p className="objective-description">{objective.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* Intervention Domains Section */}
+      <section className="about-section-light">
+        <Container size="lg">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="section-header"
+          >
+            <h2 className="section-title">
+              Nos domaines d'
+              <span style={{ color: "var(--accent-orange)" }}>Interventions</span>
+            </h2>
+            <p className="section-subtitle">
+              Trois axes prioritaires qui concentrent notre action et notre impact.
+            </p>
+          </motion.div>
+
+          <div className="values-grid">
+            {interventionDomains.map((domain, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.1 * i }}
+                viewport={{ once: true }}
+                className="value-card"
+              >
+                <span className="value-icon" style={{ color: domain.color }}>
+                  {domain.icon}
+                </span>
+                <h3 className="value-title">{domain.title}</h3>
+                <p className="value-description">{domain.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* Services Section */}
+      <section className="about-section-light" id="services">
+        <Container size="lg">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="section-header"
+          >
+            <h2 className="section-title">
+              Nos <span style={{ color: "var(--accent-orange)" }}>Services</span>
+            </h2>
+            <p className="section-subtitle">
+              Des services concrets, pensés pour les jeunes, les porteurs de projets,
+              les institutions et les entrepreneurs qui veulent créer un impact réel.
+            </p>
+          </motion.div>
+
+          <div className="values-grid">
+            {services.map((service, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.08 * i }}
+                viewport={{ once: true }}
+                className="value-card"
+              >
+                <span className="value-icon" style={{ color: service.color }}>
+                  {service.icon}
+                </span>
+                <h3 className="value-title">{service.title}</h3>
+                <p className="value-description">{service.description}</p>
               </motion.div>
             ))}
           </div>
