@@ -439,22 +439,23 @@ const OnboardingProgram = () => {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
+                whileHover={{ y: -2 }}
                 className="glass rounded-xl p-6 md:p-7 border border-border/70 shadow-sm"
               >
                 <div className="flex items-center gap-2 mb-1">
                   <Smartphone className="h-5 w-5 text-primary" />
-                  <h3 className="font-display text-lg font-semibold">{t("onboarding.mobileNetworksTitle")}</h3>
+                  <h3 className="font-display text-lg font-semibold text-foreground">{t("onboarding.mobileNetworksTitle")}</h3>
                 </div>
-                <p className="text-sm text-muted-foreground mb-5">
+                <p className="text-sm text-foreground/80 mb-5">
                   Remplissez les informations ci-dessous pour finaliser votre don via Mobile Money.
                 </p>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm text-muted-foreground block mb-1.5">Réseau Mobile Money</label>
+                    <label className="text-sm text-foreground/90 block mb-1.5">Réseau Mobile Money</label>
                     <select
                       value={mobileNetwork}
                       onChange={(e) => setMobileNetwork(e.target.value as "orange" | "airtel" | "mpesa")}
-                      className="w-full px-4 py-3 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      className="w-full px-4 py-3 rounded-lg bg-background/80 border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-200"
                     >
                       <option value="orange">{t("onboarding.mobile.orange")}</option>
                       <option value="airtel">{t("onboarding.mobile.airtel")}</option>
@@ -462,7 +463,7 @@ const OnboardingProgram = () => {
                     </select>
                   </div>
                   <div>
-                    <label className="text-sm text-muted-foreground block mb-1.5">Montant (USD)</label>
+                    <label className="text-sm text-foreground/90 block mb-1.5">Montant (USD)</label>
                     <input
                       type="number"
                       min="1"
@@ -470,37 +471,37 @@ const OnboardingProgram = () => {
                       value={donationAmount}
                       onChange={(e) => setDonationAmount(e.target.value)}
                       placeholder="Ex: 10"
-                      className="w-full px-4 py-3 rounded-lg bg-secondary border border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      className="w-full px-4 py-3 rounded-lg bg-background/80 border border-border text-foreground placeholder:text-foreground/60 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-200"
                     />
                   </div>
                   <div>
-                    <label className="text-sm text-muted-foreground block mb-1.5">Nom complet</label>
+                    <label className="text-sm text-foreground/90 block mb-1.5">Nom complet</label>
                     <input
                       type="text"
                       value={donorName}
                       onChange={(e) => setDonorName(e.target.value)}
                       placeholder="Votre nom"
-                      className="w-full px-4 py-3 rounded-lg bg-secondary border border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      className="w-full px-4 py-3 rounded-lg bg-background/80 border border-border text-foreground placeholder:text-foreground/60 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-200"
                     />
                   </div>
                   <div>
-                    <label className="text-sm text-muted-foreground block mb-1.5">Email</label>
+                    <label className="text-sm text-foreground/90 block mb-1.5">Email</label>
                     <input
                       type="email"
                       value={donorEmail}
                       onChange={(e) => setDonorEmail(e.target.value)}
                       placeholder="vous@email.com"
-                      className="w-full px-4 py-3 rounded-lg bg-secondary border border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      className="w-full px-4 py-3 rounded-lg bg-background/80 border border-border text-foreground placeholder:text-foreground/60 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-200"
                     />
                   </div>
                   <div className="md:col-span-2">
-                    <label className="text-sm text-muted-foreground block mb-1.5">Téléphone</label>
+                    <label className="text-sm text-foreground/90 block mb-1.5">Téléphone</label>
                     <input
                       type="tel"
                       value={donorPhone}
                       onChange={(e) => setDonorPhone(e.target.value)}
                       placeholder="+243..."
-                      className="w-full px-4 py-3 rounded-lg bg-secondary border border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      className="w-full px-4 py-3 rounded-lg bg-background/80 border border-border text-foreground placeholder:text-foreground/60 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-200"
                     />
                   </div>
                 </div>
@@ -508,7 +509,7 @@ const OnboardingProgram = () => {
                   <button
                     type="button"
                     onClick={handleFlutterwaveDonate}
-                    className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
                     disabled={isSubmittingDonation}
                   >
                     {isSubmittingDonation ? "Traitement..." : "Continuer le don via Flutterwave"}
@@ -521,24 +522,25 @@ const OnboardingProgram = () => {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
+                whileHover={{ y: -2 }}
                 className="glass rounded-xl p-6 md:p-7 border border-border/70 shadow-sm"
               >
                 <div className="flex items-center gap-2 mb-1">
                   <Wallet className="h-5 w-5 text-primary" />
-                  <h3 className="font-display text-lg font-semibold">{t("onboarding.cryptoTitle")}</h3>
+                  <h3 className="font-display text-lg font-semibold text-foreground">{t("onboarding.cryptoTitle")}</h3>
                 </div>
-                <p className="text-muted-foreground mb-5">
+                <p className="text-foreground/80 mb-5">
                   {t("onboarding.cryptoHow")}
                 </p>
-                <div className="rounded-lg border border-border bg-secondary/60 p-4 mb-4">
-                  <p className="text-xs text-muted-foreground mb-1">Adresse wallet Cardano</p>
-                  <p className="text-sm break-all">{cardanoWalletAddress}</p>
+                <div className="rounded-lg border border-border bg-background/80 p-4 mb-4">
+                  <p className="text-xs text-foreground/70 mb-1">Adresse wallet Cardano</p>
+                  <p className="text-sm text-foreground break-all">{cardanoWalletAddress}</p>
                 </div>
                 <div className="flex flex-wrap gap-3 mb-4">
                   <button
                     type="button"
                     onClick={copyWalletAddress}
-                    className="inline-flex items-center justify-center px-4 py-2 rounded-lg border border-border bg-secondary/70 hover:bg-secondary/90 transition"
+                    className="inline-flex items-center justify-center px-4 py-2 rounded-lg border border-border bg-background/80 text-foreground hover:bg-secondary/70 transition-all duration-200"
                   >
                     Copier l'adresse
                   </button>
@@ -546,7 +548,7 @@ const OnboardingProgram = () => {
                     href={`https://cardanoscan.io/address/${cardanoWalletAddress}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center px-4 py-2 rounded-lg border border-border bg-secondary/70 hover:bg-secondary/90 transition"
+                    className="inline-flex items-center justify-center px-4 py-2 rounded-lg border border-border bg-background/80 text-foreground hover:bg-secondary/70 transition-all duration-200"
                   >
                     Voir sur Cardanoscan
                   </a>
@@ -554,7 +556,7 @@ const OnboardingProgram = () => {
                 <button
                   type="button"
                   onClick={handleCryptoIntent}
-                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
                   disabled={isSubmittingDonation}
                 >
                   {isSubmittingDonation ? "Traitement..." : "J'ai effectué le don"}
