@@ -24,6 +24,7 @@ const Footer = () => {
         { labelKey: "nav.about", path: "/about" },
         { labelKey: "nav.events", path: "/events" },
         { labelKey: "nav.projects", path: "/projects" },
+        { labelKey: "nav.gallery", path: "/resources#gallery" },
         { labelKey: "nav.community", path: "/community" },
       ],
     },
@@ -99,6 +100,13 @@ const Footer = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const devEmail = "ujuzilabs1@gmail.com";
+  const devMailto = `mailto:${devEmail}?subject=${encodeURIComponent(
+    "Demande de site web moderne pour mon entreprise"
+  )}&body=${encodeURIComponent(
+    "Bonjour UJUZI Labs Team,\nBonjour Jacques\n\nJ'ai visité votre site et je l'apprécie tellement. Pouvez-vous me concevoir aussi un site web moderne pour mon entreprise ?\n\nMerci."
+  )}`;
+
   return (
     <footer className="bg-background border-t border-border text-foreground transition-colors duration-300">
       <div className="max-w-6xl mx-auto px-6 py-16">
@@ -169,7 +177,12 @@ const Footer = () => {
             <div className="flex flex-col gap-3">
               {(() => {
                 const gQuick = footerMenuGroups.find((g) => g.labelKey === "footer.quickLinks") ?? footerMenuGroups[0];
-                return (gQuick?.items ?? []).map((item) => (
+                const quickItems = [...(gQuick?.items ?? [])];
+                const hasGallery = quickItems.some((item) => item.path === "/resources#gallery");
+                if (!hasGallery) {
+                  quickItems.push({ labelKey: "nav.gallery", path: "/resources#gallery" });
+                }
+                return quickItems.map((item) => (
                   <Link
                     key={item.path}
                     to={item.path}
@@ -277,9 +290,19 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-16 pt-8 border-t border-border text-center">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} UJUZI Labs. {t("footer.rights")}
+        <div className="mt-16 pt-8 border-t border-border">
+          <p className="text-sm text-muted-foreground flex items-center justify-between gap-4">
+            <span className="text-left">© {new Date().getFullYear()} UJUZI Labs. {t("footer.rights")}</span>
+            <span className="whitespace-nowrap">
+              Developped by{" "}
+              <a
+                href={devMailto}
+                className="text-foreground hover:text-primary transition-colors hover:underline underline-offset-4"
+                title="Envoyer une demande de création de site web moderne"
+              >
+                UJUZI Labs Developpers Team
+              </a>
+            </span>
           </p>
         </div>
       </div>

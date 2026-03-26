@@ -16,6 +16,8 @@ const iconMap: Record<string, ElementType> = {
   file: FileText,
 };
 
+const RESOURCES_GALLERY_BASE_PATH = "/resources/gallery";
+
 const Resources = () => {
   const { t } = useTranslation();
 
@@ -65,25 +67,25 @@ const Resources = () => {
 
   const hardcodedGalleryEvents: GalleryEvent[] = [
     {
-      title: "Cardano Summit 2022",
-      subtitle: "Blockchain and its opportunities for Africa",
-      date: "30 July 2026",
+      title: "Images Onboarding Program",
+      subtitle: "Nos images de l'Onboarding Program",
+      date: "2022-2025",
       description:
-        "À UJUZI Labs Web3, nous avons rassemblé des builders, étudiants et entrepreneurs pour explorer l’écosystème Cardano et les opportunités concrètes du Web3 en Afrique. Entre échanges avec des experts, partages d’expériences et démonstrations, cette rencontre a surtout mis l’accent sur l’apprentissage, la collaboration et le passage à l’action autour de projets locaux.",
+        "Voici les images de l'Onboarding Program de UJUZI Labs Web3 qui est un programme de formation sur le Web3 pour les nouveaux membres de la communauté.",
       images: Array.from({ length: 6 }).map((_, i) => ({
         alt: `Wada Burkina Faso Hub — photo ${i + 1}`,
-        imageUrl: `https://via.placeholder.com/900x650?text=Event+1+Photo+${i + 1}`,
+        imageUrl: `${RESOURCES_GALLERY_BASE_PATH}/cardano-summit-2022/photo-${i + 1}.jpg`,
       })),
     },
     {
-      title: "Cardano Africa Tech Summit",
-      subtitle: "Inauguration of Wada Burkina Faso Hub",
+      title: "Hackathons et Evénements",
+      subtitle: "Les Hackathons et les événements de UJUZI Labs Web3",
       date: "2026",
       description:
-        "Cette édition a mis en lumière la vision de UJUZI Labs Web3 : bâtir un centre d’excellence où les talents apprennent, expérimentent et développent des solutions blockchain utiles à notre région. Au programme : panels, networking, ateliers pratiques et mise en relation avec des mentors pour accélérer l’incubation des projets portés par la communauté.",
+        "Voici les images des Hackathons et des événements de UJUZI Labs Web3 et les projets Cardano, Ujuzi Labs et les autres projets de la communauté a participé à des Hackathons et des événements organisés localement à Goma et à Nairobi, Kenya.",
       images: Array.from({ length: 6 }).map((_, i) => ({
         alt: `Inauguration — photo ${i + 1}`,
-        imageUrl: `https://via.placeholder.com/900x650?text=Event+2+Photo+${i + 1}`,
+        imageUrl: `${RESOURCES_GALLERY_BASE_PATH}/cardano-africa-tech-summit/photo-${i + 1}.jpg`,
       })),
     },
   ];
