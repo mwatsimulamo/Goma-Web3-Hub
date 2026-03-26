@@ -251,11 +251,11 @@ const Resources = () => {
                       key={`${eventIndex}-${imgIndex}`}
                       className="glass rounded-none overflow-hidden hover:border-primary/30 transition-colors"
                     >
-                      <div className="relative aspect-[4/3] overflow-hidden">
+                      <div className="relative aspect-[4/3] overflow-hidden rounded-none">
                         <img
                           src={img.imageUrl}
                           alt={img.alt}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover rounded-none"
                           loading="lazy"
                         />
                       </div>
