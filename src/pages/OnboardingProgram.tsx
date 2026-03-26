@@ -246,7 +246,7 @@ const OnboardingProgram = () => {
           <motion.div
             id="what-is-onboarding"
             {...fadeUp}
-            className="glass rounded-xl p-8 scroll-mt-28"
+            className="scroll-mt-28"
           >
             <div className="flex items-center justify-center gap-3 mb-6 text-center">
               <HeartHandshake className="h-6 w-6 text-primary" />
@@ -257,7 +257,7 @@ const OnboardingProgram = () => {
               onMouseEnter={() => setIsPaused(true)}
               onMouseLeave={() => setIsPaused(false)}
             >
-              <div className="grid h-full grid-cols-1 lg:grid-cols-2">
+              <div className="grid h-full grid-cols-1 lg:grid-cols-2 lg:gap-4">
                 {/* Image (gauche) */}
                 <div className="relative min-h-[360px] lg:min-h-0 overflow-hidden rounded-2xl border border-border">
                   <AnimatePresence mode="wait">
@@ -298,10 +298,13 @@ const OnboardingProgram = () => {
                 </div>
 
                 {/* Texte (droite) */}
-                <div className="flex items-center justify-end p-5 md:p-7 lg:p-8">
-                  <div className="max-w-md bg-black/40 text-white backdrop-blur-sm rounded-2xl py-4 px-4 md:py-5 md:px-5 shadow-[0_14px_40px_rgba(0,0,0,0.22)] border border-white/10">
+                <div className="flex items-center justify-end p-5 md:p-6 lg:p-4">
+                  <div className="max-w-md py-1 px-1 md:py-2 md:px-2">
+                    <h3 className="font-display text-xl md:text-2xl font-bold mb-3 text-left text-foreground">
+                      Web3 Onboarding Program
+                    </h3>
                     <p
-                      className="font-display leading-relaxed text-right text-sm md:text-base lg:text-lg font-medium"
+                      className="font-display leading-relaxed text-justify text-sm md:text-base lg:text-lg font-medium text-foreground"
                     >
                       Since 2023, Ujuzi Labs identified a strong need for Web3 education, especially around the Cardano blockchain.
                       This led us to launch this program, through which at the end of each month we mobilize our limited resources and
@@ -430,23 +433,6 @@ const OnboardingProgram = () => {
               >
                 {t("onboarding.cryptoButton")}
               </button>
-            </div>
-
-            <div className="rounded-2xl border border-border bg-gradient-to-br from-secondary/40 to-secondary/20 p-6 md:p-7 mb-5 shadow-sm">
-              <h3 className="font-display text-xl font-semibold mb-2 text-center">
-                {t("onboarding.ideaTitle")}
-              </h3>
-              <p className="text-muted-foreground mb-5 text-center leading-relaxed">
-                {t("onboarding.ideaDesc")}
-              </p>
-              <div className="flex justify-center">
-                <Link
-                  to="/contact"
-                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition"
-                >
-                  {t("onboarding.ideaCta")}
-                </Link>
-              </div>
             </div>
 
             {donateMethod === "mobile" && (
@@ -586,6 +572,23 @@ const OnboardingProgram = () => {
             {donateError && (
               <p className="text-sm text-destructive mt-3 text-center">{donateError}</p>
             )}
+
+            <div className="rounded-2xl border border-border bg-gradient-to-br from-secondary/40 to-secondary/20 p-6 md:p-7 mt-6 shadow-sm">
+              <h3 className="font-display text-xl font-semibold mb-2 text-center">
+                {t("onboarding.ideaTitle")}
+              </h3>
+              <p className="text-muted-foreground mb-5 text-center leading-relaxed">
+                {t("onboarding.ideaDesc")}
+              </p>
+              <div className="flex justify-center">
+                <Link
+                  to="/contact"
+                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition"
+                >
+                  {t("onboarding.ideaCta")}
+                </Link>
+              </div>
+            </div>
           </motion.div>
         </div>
       </section>
