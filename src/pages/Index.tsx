@@ -3,8 +3,8 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ArrowRight, Users, Calendar, Rocket, Award, ChevronRight, MapPin, ExternalLink } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { strapiFetch } from "@/lib/strapi";
 import CustomButton from "@/components/ui/CustomButton";
 import EventCard from "@/components/ui/EventCard";
 import SectionWrapper from "@/components/ui/SectionWrapper";
@@ -106,18 +106,26 @@ const Index = () => {
     e.preventDefault();
     if (!newsletterEmail) return;
     setSubscribing(true);
-    const { error } = await supabase.from("newsletter_subscribers").insert({ email: newsletterEmail });
-    if (error) {
-      if (error.code === "23505") {
+    try {
+      await strapiFetch("/api/newsletter-subscribers", {
+        method: "POST",
+        body: JSON.stringify({
+          data: { email: newsletterEmail, active: true, subscribed_at: new Date().toISOString() },
+        }),
+      });
+
+      toast({ title: t("home.subscribeSuccess") });
+      setNewsletterEmail("");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "";
+      if (msg.includes("409") || msg.toLowerCase().includes("unique")) {
         toast({ title: t("home.alreadySubscribed") });
       } else {
         toast({ title: t("admin.error"), variant: "destructive" });
       }
-    } else {
-      toast({ title: t("home.subscribeSuccess") });
-      setNewsletterEmail("");
+    } finally {
+      setSubscribing(false);
     }
-    setSubscribing(false);
   };
 
   return (

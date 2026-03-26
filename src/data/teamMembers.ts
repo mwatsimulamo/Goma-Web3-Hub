@@ -13,7 +13,7 @@ export interface TeamMember {
 // Exemple image: "/team/boaz.jpg" (fichier dans public/team/)
 // Exemple X: "https://x.com/username"
 // Exemple Telegram: "https://t.me/username"
-// Exemple LinkedIn: "https://www.linkedin.com/in/username/"
+// Exemple LinkedIn: "https://www.linkedin.com/in/nom-d'utilisateur/"
 export const teamMembers: TeamMember[] = [
   {
     name: "FREDERIC SAMVURA Genty",

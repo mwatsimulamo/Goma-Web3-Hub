@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import {
@@ -25,12 +26,22 @@ import ModernCard from "@/components/ui/ModernCard";
 import ModernSectionWrapper from "@/components/ui/ModernSectionWrapper";
 import Container from "@/components/ui/Container";
 import "@/styles/AboutDesign.css";
-import { teamMembers } from "@/data/teamMembers";
+import { teamMembers, type TeamMember } from "@/data/teamMembers";
+import { mediaToUrl, strapiFetch } from "@/lib/strapi";
+
+const FALLBACK_ABOUT_HERO_BG = "/about/about.jpg";
+
+function teamMembersWithValidImages(members: TeamMember[]): TeamMember[] {
+  return members.filter(
+    (m) =>
+      Boolean(m.image?.trim()) &&
+      !m.image.startsWith("TO_ADD_") &&
+      !m.image.startsWith("http://TO_ADD")
+  );
+}
 
 const About = () => {
   const { t } = useTranslation();
-  // Remplace ce chemin par ton image de fond About.
-  const aboutHeroBackground = "/about/about.jpg";
 
   const objectives = [
     {
@@ -59,7 +70,71 @@ const About = () => {
     },
   ];
 
-  const team = teamMembers;
+  const [team, setTeam] = useState<TeamMember[]>(teamMembers);
+
+  const heroTeamMembers = useMemo(() => teamMembersWithValidImages(team), [team]);
+  const [heroSlideIndex, setHeroSlideIndex] = useState(0);
+
+  useEffect(() => {
+    setHeroSlideIndex(0);
+  }, [heroTeamMembers.length]);
+
+  useEffect(() => {
+    if (heroTeamMembers.length < 2) return;
+    const id = window.setInterval(() => {
+      setHeroSlideIndex((i) => (i + 1) % heroTeamMembers.length);
+    }, 6000);
+    return () => clearInterval(id);
+  }, [heroTeamMembers.length]);
+
+  const heroCount = heroTeamMembers.length;
+  const heroBgUrl =
+    heroCount > 0
+      ? heroTeamMembers[heroSlideIndex % heroCount].image
+      : FALLBACK_ABOUT_HERO_BG;
+  const heroLeft = heroCount > 0 ? heroTeamMembers[heroSlideIndex % heroCount] : null;
+  const heroRight =
+    heroCount > 1
+      ? heroTeamMembers[(heroSlideIndex + 1) % heroCount]
+      : heroCount === 1
+        ? heroTeamMembers[0]
+        : null;
+
+  useEffect(() => {
+    const fetchTeam = async () => {
+      try {
+        const res = await strapiFetch<{ data: unknown[] }>(
+          "/api/team-members?populate=image&pagination[pageSize]=100"
+        );
+        const items = res.data || [];
+
+        const mapped: TeamMember[] = items
+          .map((item) => {
+            const it = item as { id?: string | number; attributes?: Record<string, unknown> };
+            const attrs = (it.attributes ?? {}) as Record<string, unknown>;
+            const imageUrl = mediaToUrl(attrs.image) ?? "";
+
+            return {
+              name: String(attrs.name ?? ""),
+              role: String(attrs.role ?? ""),
+              image: imageUrl,
+              social: {
+                x: String(attrs.social_x ?? attrs.x ?? ""),
+                telegram: String(attrs.social_telegram ?? attrs.telegram ?? ""),
+                linkedin: String(attrs.social_linkedin ?? attrs.linkedin ?? ""),
+              },
+            } satisfies TeamMember;
+          })
+          .filter((m) => m.name && m.role);
+
+        if (mapped.length) setTeam(mapped);
+      } catch {
+        // fallback: teamMembers local
+      }
+    };
+
+    fetchTeam();
+  }, []);
   const interventionDomains = [
     {
       title: "Education",
@@ -132,52 +207,99 @@ const About = () => {
   return (
     <div className="min-h-screen" style={{ background: "var(--dark-bg)" }}>
       {/* Hero Section */}
-      <section
-        className="about-hero"
-        style={{
-          backgroundImage: `linear-gradient(180deg, rgba(8, 16, 30, 0.76) 0%, rgba(12, 24, 44, 0.82) 100%), url('${aboutHeroBackground}')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      >
-        <div className="hero-content">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="animate-fade-in-up"
-          >
-            <div className="hero-badge">
-              <Star className="w-4 h-4" />
-              <span>Centre d'Innovation Hybride</span>
-            </div>
-
-            <h1 className="hero-title">
-              À Propos d'
-              <span style={{ color: "var(--accent-orange)" }}>UJUZI Labs</span>
-            </h1>
-
-            <p className="hero-subtitle">
-              Le centre d'innovation hybride pour le développement de la RD
-              Congo, transformant le potentiel de la jeunesse en impact réel à
-              travers la blockchain et l'agriculture durable.
-            </p>
-
-            <div className="hero-buttons">
-              <a href="/community" className="btn-primary">
-                <Zap className="w-5 h-5" />
-                Rejoindre la communauté
-                <ArrowRight className="w-5 h-5" />
-              </a>
-
-              <a href="/events" className="btn-secondary">
-                <Calendar className="w-5 h-5" />
-                Voir les événements
-              </a>
-            </div>
-          </motion.div>
+      <section className="relative overflow-hidden py-16 md:py-24">
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-950/70 via-slate-950/60 to-transparent" />
+          <div
+            key={heroBgUrl}
+            className="absolute inset-0 opacity-20 bg-cover bg-center transition-opacity duration-700"
+            style={{
+              backgroundImage: `url('${heroBgUrl}')`,
+            }}
+          />
         </div>
+
+        <Container size="lg" className="relative">
+          <div className="grid lg:grid-cols-12 gap-10 items-center">
+            {/* Left: text */}
+            <div className="lg:col-span-6">
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7 }}
+                className="space-y-6"
+              >
+                <div className="inline-flex items-center gap-2 rounded-full border border-blue-400/20 bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-100">
+                  <Star className="h-4 w-4 text-blue-300" />
+                  <span>Centre d'Innovation Hybride</span>
+                </div>
+
+                <h1 className="text-4xl md:text-5xl font-bold leading-tight text-white">
+                  À propos de <span className="text-blue-400">UJUZI Labs</span>
+                </h1>
+
+                <p className="text-base md:text-lg leading-relaxed text-blue-50/90 max-w-xl">
+                  UJUZI Labs est un centre d'innovation engagé dans l'éducation et l'incubation des
+                  talents en Afrique Centrale. Notre approche conjugue rigueur académique et
+                  expérimentation terrain pour former des builders capables de concevoir, déployer et
+                  améliorer des solutions Web3 responsables. En reliant la blockchain à des pratiques
+                  durables, nous transformons le potentiel de la jeunesse en résultats mesurables :
+                  apprentissage structuré, projets incubés et impact concret au bénéfice des communautés.
+                </p>
+
+                <div className="flex flex-wrap gap-3 pt-2">
+                  <a href="/community" className="btn-primary">
+                    <Zap className="w-5 h-5" />
+                    Rejoindre la communauté
+                    <ArrowRight className="w-5 h-5" />
+                  </a>
+                  <a href="/events" className="btn-secondary">
+                    <Calendar className="w-5 h-5" />
+                    Voir les événements
+                  </a>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Right: overlapping portraits */}
+            <div className="lg:col-span-6 flex justify-end">
+              <div className="relative w-full max-w-xl h-[520px]">
+                <motion.div
+                  initial={{ opacity: 0, x: 28 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7 }}
+                  className="absolute -left-6 top-0 w-[270px] h-[510px] rounded-3xl overflow-hidden border border-white/10 bg-white/5 shadow-2xl"
+                >
+                  <img
+                    src={heroLeft?.image ?? FALLBACK_ABOUT_HERO_BG}
+                    alt={heroLeft ? `Portrait — ${heroLeft.name}` : "Équipe UJUZI Labs"}
+                    className="w-full h-full object-cover object-top"
+                    loading="lazy"
+                  />
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, x: -18 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7, delay: 0.05 }}
+                  className="absolute -right-4 top-24 w-[260px] h-[360px] rounded-3xl overflow-hidden border border-white/10 bg-white/5 shadow-2xl"
+                >
+                  <img
+                    src={heroRight?.image ?? FALLBACK_ABOUT_HERO_BG}
+                    alt={heroRight ? `Portrait — ${heroRight.name}` : "Équipe UJUZI Labs"}
+                    className="w-full h-full object-cover object-center"
+                    loading="lazy"
+                  />
+                </motion.div>
+
+                <div className="absolute -right-10 -bottom-10 w-64 h-64 rounded-full bg-blue-500/15 blur-2xl" />
+              </div>
+            </div>
+          </div>
+        </Container>
       </section>
 
       {/* Mission Section */}

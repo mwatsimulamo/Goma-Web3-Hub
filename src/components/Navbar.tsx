@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import ThemeToggle from "@/components/ThemeToggle";
 import logo from "@/assets/logo.png";
+import { strapiFetch } from "@/lib/strapi";
 
 interface NavGroup {
   label: string;
@@ -20,7 +21,7 @@ const Navbar = () => {
   const { t } = useTranslation();
   const dropdownTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const navGroups: (NavGroup | { key: string; path: string })[] = [
+  const fallbackNavGroups: (NavGroup | { key: string; path: string })[] = [
     { key: "home", path: "/" },
     {
       label: "nav.about",
@@ -60,7 +61,81 @@ const Navbar = () => {
     },
   ];
 
-  const isGroup = (item: any): item is NavGroup => "items" in item;
+  const [navGroups, setNavGroups] = useState<(NavGroup | { key: string; path: string })[]>(fallbackNavGroups);
+
+  const stripNavKey = (labelKey: string) => {
+    if (!labelKey) return labelKey;
+    if (labelKey.startsWith("nav.")) return labelKey.slice("nav.".length);
+    return labelKey;
+  };
+
+  useEffect(() => {
+    const fetchMenus = async () => {
+      try {
+        type StrapiMenuGroup = {
+          id: string | number;
+          attributes?: {
+            labelKey?: string;
+            location?: "header" | "footer";
+            order?: number;
+            items?: { data?: Array<{ id?: string | number; attributes?: { labelKey?: string; path?: string; order?: number } }> };
+          };
+        };
+
+        const res = await strapiFetch<{ data?: StrapiMenuGroup[] }>(
+          "/api/site-menu-groups?populate=items&pagination[pageSize]=50"
+        );
+        const groups = (res.data ?? []).filter(Boolean);
+
+        const headerGroups = groups
+          .map((g) => {
+            const attrs = g.attributes ?? {};
+            if (attrs.location !== "header") return null;
+            const groupLabelKey = String(attrs.labelKey ?? "");
+            if (!groupLabelKey) return null;
+
+            const items = attrs.items?.data ?? [];
+            const mappedItems = items
+              .map((it) => {
+                const iAttrs = it.attributes ?? {};
+                const labelKey = String(iAttrs.labelKey ?? "");
+                const path = String(iAttrs.path ?? "");
+                if (!labelKey || !path) return null;
+                return {
+                  key: stripNavKey(labelKey),
+                  path,
+                };
+              })
+              .filter((x): x is { key: string; path: string } => x !== null);
+
+            return {
+              label: groupLabelKey,
+              items: mappedItems,
+              order: typeof attrs.order === "number" ? attrs.order : 0,
+            };
+          })
+          .filter((x): x is { label: string; items: NavGroup["items"]; order: number } => x !== null)
+          .sort((a, b) => a.order - b.order);
+
+        if (headerGroups.length) {
+          setNavGroups([
+            { key: "home", path: "/" },
+            ...headerGroups.map((g) => ({ label: g.label, items: g.items })),
+          ]);
+        }
+      } catch {
+        // Fallback déjà présent
+      }
+    };
+
+    fetchMenus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const isGroup = (item: unknown): item is NavGroup => {
+    if (typeof item !== "object" || item === null) return false;
+    return "items" in item;
+  };
 
   const handleMouseEnter = (label: string) => {
     if (dropdownTimeout.current) clearTimeout(dropdownTimeout.current);

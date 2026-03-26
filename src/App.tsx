@@ -4,8 +4,8 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AuthProvider } from "@/hooks/useAuth";
-import { useAuth } from "@/hooks/useAuth";
+import { StrapiAuthProvider } from "@/hooks/useStrapiAuth";
+import { useStrapiAuth } from "@/hooks/useStrapiAuth";
 import Layout from "./components/Layout";
 import Index from "./pages/Index-final";
 import About from "./pages/About";
@@ -29,7 +29,7 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const AdminRoute = ({ children }: { children: ReactElement }) => {
-  const { user, isAdmin, loading } = useAuth();
+  const { user, isAdmin, loading } = useStrapiAuth();
 
   if (loading) {
     return <div className="min-h-[70vh] flex items-center justify-center text-muted-foreground">Loading...</div>;
@@ -48,7 +48,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <AuthProvider>
+        <StrapiAuthProvider>
           <Layout>
             <Routes>
               <Route path="/" element={<Index />} />
@@ -78,7 +78,7 @@ const App = () => (
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>
-        </AuthProvider>
+        </StrapiAuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

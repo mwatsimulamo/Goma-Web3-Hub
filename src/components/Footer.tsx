@@ -1,13 +1,103 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Mail, Phone, MapPin } from "lucide-react";
 import { IconDiscord, IconGitHub, IconTelegram, IconX } from "./FooterSocialIcons";
+import { useToast } from "@/hooks/use-toast";
+import { strapiFetch } from "@/lib/strapi";
 
 const Footer = () => {
   const { t } = useTranslation();
   const [newsletterName, setNewsletterName] = useState("");
   const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const { toast } = useToast();
+
+  type FooterMenuItem = { labelKey: string; path: string };
+  type FooterMenuGroup = { labelKey: string; items: FooterMenuItem[]; order: number };
+
+  const fallbackFooterGroups: FooterMenuGroup[] = [
+    {
+      labelKey: "footer.quickLinks",
+      order: 0,
+      items: [
+        { labelKey: "nav.about", path: "/about" },
+        { labelKey: "nav.events", path: "/events" },
+        { labelKey: "nav.projects", path: "/projects" },
+        { labelKey: "nav.community", path: "/community" },
+      ],
+    },
+    {
+      labelKey: "footer.resources",
+      order: 1,
+      items: [
+        { labelKey: "nav.blog", path: "/blog" },
+        { labelKey: "nav.documentation", path: "/documentation" },
+        { labelKey: "nav.tools", path: "/tools" },
+        { labelKey: "nav.contact", path: "/contact" },
+      ],
+    },
+  ];
+
+  const [footerMenuGroups, setFooterMenuGroups] = useState<FooterMenuGroup[]>(fallbackFooterGroups);
+
+  const resolveLabel = (labelKey: string) => {
+    if (!labelKey) return "";
+    if (labelKey.includes(".")) return t(labelKey);
+    return t(`nav.${labelKey}`);
+  };
+
+  useEffect(() => {
+    const fetchFooterMenus = async () => {
+      try {
+        type StrapiMenuGroup = {
+          attributes?: {
+            labelKey?: string;
+            location?: "header" | "footer";
+            order?: number;
+            items?: { data?: Array<{ attributes?: { labelKey?: string; path?: string; order?: number } }> };
+          };
+        };
+
+        const res = await strapiFetch<{ data?: StrapiMenuGroup[] }>(
+          "/api/site-menu-groups?populate=items&pagination[pageSize]=50"
+        );
+        const groups = (res.data ?? []).filter(Boolean);
+
+        const mapped: FooterMenuGroup[] = groups
+          .map((g) => {
+            const attrs = g.attributes ?? {};
+            if (attrs.location !== "footer") return null;
+            const labelKey = String(attrs.labelKey ?? "");
+            if (!labelKey) return null;
+
+            const items = attrs.items?.data ?? [];
+            const mappedItems: FooterMenuItem[] = items
+              .map((it) => {
+                const iAttrs = it.attributes ?? {};
+                const itemLabelKey = String(iAttrs.labelKey ?? "");
+                const path = String(iAttrs.path ?? "");
+                if (!itemLabelKey || !path) return null;
+                return { labelKey: itemLabelKey, path };
+              })
+              .filter((x): x is FooterMenuItem => x !== null);
+
+            const order = typeof attrs.order === "number" ? attrs.order : 0;
+            if (!mappedItems.length) return null;
+            return { labelKey, items: mappedItems, order };
+          })
+          .filter((x): x is FooterMenuGroup => x !== null)
+          .sort((a, b) => a.order - b.order);
+
+        if (mapped.length >= 1) setFooterMenuGroups(mapped);
+      } catch {
+        // fallback déjà présent
+      }
+    };
+
+    fetchFooterMenus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <footer className="bg-background border-t border-border text-foreground transition-colors duration-300">
@@ -71,26 +161,50 @@ const Footer = () => {
           {/* Quick Links */}
           <div>
             <h4 className="font-display font-semibold mb-6 text-sm uppercase tracking-wider text-foreground">
-              {t("footer.quickLinks")}
+              {(() => {
+                const gQuick = footerMenuGroups.find((g) => g.labelKey === "footer.quickLinks") ?? footerMenuGroups[0];
+                return resolveLabel(gQuick?.labelKey ?? "footer.quickLinks");
+              })()}
             </h4>
             <div className="flex flex-col gap-3">
-              <Link to="/about" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t("nav.about")}</Link>
-              <Link to="/events" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t("nav.events")}</Link>
-              <Link to="/projects" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t("nav.projects")}</Link>
-              <Link to="/community" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t("nav.community")}</Link>
+              {(() => {
+                const gQuick = footerMenuGroups.find((g) => g.labelKey === "footer.quickLinks") ?? footerMenuGroups[0];
+                return (gQuick?.items ?? []).map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    {resolveLabel(item.labelKey)}
+                  </Link>
+                ));
+              })()}
             </div>
           </div>
 
           {/* Resources */}
           <div>
             <h4 className="font-display font-semibold mb-6 text-sm uppercase tracking-wider text-foreground">
-              {t("footer.resources")}
+              {(() => {
+                const gRes =
+                  footerMenuGroups.find((g) => g.labelKey === "footer.resources") ?? footerMenuGroups[1] ?? footerMenuGroups[0];
+                return resolveLabel(gRes?.labelKey ?? "footer.resources");
+              })()}
             </h4>
             <div className="flex flex-col gap-3">
-              <Link to="/blog" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t("nav.blog")}</Link>
-              <Link to="/documentation" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t("nav.documentation")}</Link>
-              <Link to="/tools" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t("nav.tools")}</Link>
-              <Link to="/contact" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t("nav.contact")}</Link>
+              {(() => {
+                const gRes =
+                  footerMenuGroups.find((g) => g.labelKey === "footer.resources") ?? footerMenuGroups[1] ?? footerMenuGroups[0];
+                return (gRes?.items ?? []).map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    {resolveLabel(item.labelKey)}
+                  </Link>
+                ));
+              })()}
             </div>
           </div>
 
@@ -104,10 +218,38 @@ const Footer = () => {
             </p>
             <form
               className="flex flex-col gap-2.5"
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
-                setNewsletterName("");
-                setNewsletterEmail("");
+
+                if (submitting) return;
+                if (!newsletterEmail) return;
+
+                setSubmitting(true);
+                try {
+                  await strapiFetch("/api/newsletter-subscribers", {
+                    method: "POST",
+                    body: JSON.stringify({
+                      data: {
+                        email: newsletterEmail,
+                        active: true,
+                        subscribed_at: new Date().toISOString(),
+                      },
+                    }),
+                  });
+
+                  toast({ title: t("home.subscribeSuccess") });
+                  setNewsletterName("");
+                  setNewsletterEmail("");
+                } catch (err: unknown) {
+                  const msg = err instanceof Error ? err.message : "";
+                  if (msg.includes("409") || msg.toLowerCase().includes("unique")) {
+                    toast({ title: t("home.alreadySubscribed"), variant: "destructive" });
+                  } else {
+                    toast({ title: t("admin.error"), variant: "destructive" });
+                  }
+                } finally {
+                  setSubmitting(false);
+                }
               }}
             >
               <input
@@ -127,8 +269,9 @@ const Footer = () => {
               <button
                 type="submit"
                 className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+                disabled={submitting}
               >
-                {t("home.subscribe")}
+                {submitting ? "..." : t("home.subscribe")}
               </button>
             </form>
           </div>

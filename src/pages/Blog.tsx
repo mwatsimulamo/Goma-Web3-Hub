@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Calendar, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { strapiFetch } from "@/lib/strapi";
 
 const fadeUp = { initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.6 } };
 
@@ -21,9 +21,44 @@ const Blog = () => {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const { data } = await supabase.from("blog_posts").select("*").eq("published", true).order("created_at", { ascending: false });
-      if (data) setPosts(data);
-      setLoading(false);
+      try {
+        type StrapiBlogPostItem = {
+          id: string | number;
+          attributes?: {
+            title?: string;
+            title_fr?: string | null;
+            excerpt?: string | null;
+            excerpt_fr?: string | null;
+            category?: string;
+            createdAt?: string;
+            created_at?: string;
+          };
+        };
+
+        const res = await strapiFetch<{ data: unknown[] }>(
+          "/api/blog-posts?filters[published][$eq]=true&sort=createdAt:desc&pagination[pageSize]=100"
+        );
+        const items = res.data || [];
+        const mapped: BlogPost[] = items
+          .map((item) => {
+            const it = item as StrapiBlogPostItem;
+            return {
+              id: String(it.id),
+              title: it.attributes?.title ?? "",
+              title_fr: it.attributes?.title_fr ?? null,
+              excerpt: it.attributes?.excerpt ?? null,
+              excerpt_fr: it.attributes?.excerpt_fr ?? null,
+              category: it.attributes?.category ?? "",
+              created_at: it.attributes?.createdAt ?? it.attributes?.created_at ?? "",
+            };
+          })
+          .filter((p) => p.id && p.created_at);
+        if (mapped.length) setPosts(mapped);
+      } catch {
+        // fallback hardcoded
+      } finally {
+        setLoading(false);
+      }
     };
     fetchPosts();
   }, []);

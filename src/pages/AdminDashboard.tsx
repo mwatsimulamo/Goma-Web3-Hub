@@ -5,8 +5,8 @@ import { Plus, Trash2, Users, Calendar, LogOut, Eye, FileText, Mail, Edit } from
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
+import { useStrapiAuth } from "@/hooks/useStrapiAuth";
+import { getJwtFromStorage, strapiFetch } from "@/lib/strapi";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -20,30 +20,51 @@ import {
 } from "@/components/ui/select";
 
 interface Event {
-  id: string; title: string; title_fr: string | null; description: string | null;
-  description_fr: string | null; date: string; location: string; type: string; upcoming: boolean;
+  id: string;
+  title: string;
+  title_fr: string | null;
+  description: string | null;
+  description_fr: string | null;
+  date: string;
+  location: string;
+  type: string;
+  upcoming: boolean;
 }
 
 interface Registration {
-  id: string; full_name: string; email: string; phone: string | null;
-  created_at: string; event_id: string;
+  id: string;
+  full_name: string;
+  email: string;
+  phone: string | null;
+  createdAt: string;
+  event_id: string;
 }
 
 interface BlogPost {
-  id: string; title: string; title_fr: string | null; content: string | null;
-  content_fr: string | null; excerpt: string | null; excerpt_fr: string | null;
-  category: string; published: boolean; created_at: string;
+  id: string;
+  title: string;
+  title_fr: string | null;
+  content: string | null;
+  content_fr: string | null;
+  excerpt: string | null;
+  excerpt_fr: string | null;
+  category: string;
+  published: boolean;
+  createdAt: string;
 }
 
 interface Subscriber {
-  id: string; email: string; subscribed_at: string; active: boolean;
+  id: string;
+  email: string;
+  subscribed_at: string;
+  active: boolean;
 }
 
 type TabKey = "events" | "registrations" | "blog" | "newsletter";
 
 const AdminDashboard = () => {
   const { t } = useTranslation();
-  const { user, isAdmin, signOut, loading: authLoading } = useAuth();
+  const { user, isAdmin, signOut, loading: authLoading } = useStrapiAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -67,6 +88,8 @@ const AdminDashboard = () => {
     excerpt: "", excerpt_fr: "", category: "Announcement", published: false,
   });
 
+  const getAuthToken = () => getJwtFromStorage();
+
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) navigate("/admin/login");
   }, [user, isAdmin, authLoading, navigate]);
@@ -76,71 +99,229 @@ const AdminDashboard = () => {
   }, [isAdmin]);
 
   const fetchEvents = async () => {
-    const { data } = await supabase.from("events").select("*").order("created_at", { ascending: false });
-    if (data) setEvents(data);
+    const token = getAuthToken();
+    if (!token) return;
+    type StrapiEventItem = {
+      id: string | number;
+      attributes?: Partial<Event>;
+    };
+
+    const res = await strapiFetch<{ data: unknown[] }>(
+      "/api/events?sort=createdAt:desc&pagination[pageSize]=100",
+      { token }
+    );
+    const items = res.data || [];
+    setEvents(
+      items
+        .map((item) => {
+          const it = item as StrapiEventItem;
+          const attrs = it.attributes ?? {};
+          return {
+            id: String(it.id),
+            title: (attrs as Event).title ?? "",
+            title_fr: (attrs as Event).title_fr ?? null,
+            description: (attrs as Event).description ?? null,
+            description_fr: (attrs as Event).description_fr ?? null,
+            date: (attrs as Event).date ?? "",
+            location: (attrs as Event).location ?? "",
+            type: (attrs as Event).type ?? "",
+            upcoming: Boolean((attrs as Event).upcoming),
+          } satisfies Event;
+        })
+        .filter((e) => e.title && e.date && e.location && e.type)
+    );
   };
   const fetchRegistrations = async () => {
-    const { data } = await supabase.from("event_registrations").select("*").order("created_at", { ascending: false });
-    if (data) setRegistrations(data);
+    const token = getAuthToken();
+    if (!token) return;
+    type StrapiRegistrationItem = {
+      id: string | number;
+      attributes?: {
+        full_name?: string;
+        email?: string;
+        phone?: string | null;
+        createdAt?: string;
+        created_at?: string;
+        event?: { data?: { id?: string | number } };
+      };
+    };
+
+    const res = await strapiFetch<{ data: unknown[] }>(
+      "/api/event-registrations?sort=createdAt:desc&populate=event&pagination[pageSize]=100",
+      { token }
+    );
+    const items = res.data || [];
+    setRegistrations(
+      items.map((item) => {
+        const it = item as StrapiRegistrationItem;
+        const attrs = it.attributes ?? {};
+        return {
+          id: String(it.id),
+          full_name: attrs.full_name ?? "",
+          email: attrs.email ?? "",
+          phone: attrs.phone ?? null,
+          createdAt: attrs.createdAt ?? attrs.created_at ?? "",
+          event_id: String(attrs.event?.data?.id ?? ""),
+        } satisfies Registration;
+      })
+    );
   };
   const fetchBlogPosts = async () => {
-    const { data } = await supabase.from("blog_posts").select("*").order("created_at", { ascending: false });
-    if (data) setBlogPosts(data);
+    const token = getAuthToken();
+    if (!token) return;
+    type StrapiBlogPostItem = {
+      id: string | number;
+      attributes?: Partial<BlogPost>;
+    };
+
+    const res = await strapiFetch<{ data: unknown[] }>(
+      "/api/blog-posts?sort=createdAt:desc&pagination[pageSize]=100",
+      { token }
+    );
+    const items = res.data || [];
+    setBlogPosts(
+      items.map((item) => {
+        const it = item as StrapiBlogPostItem;
+        const attrs = it.attributes ?? {};
+        return {
+          id: String(it.id),
+          title: (attrs as BlogPost).title ?? "",
+          title_fr: (attrs as BlogPost).title_fr ?? null,
+          content: (attrs as BlogPost).content ?? null,
+          content_fr: (attrs as BlogPost).content_fr ?? null,
+          excerpt: (attrs as BlogPost).excerpt ?? null,
+          excerpt_fr: (attrs as BlogPost).excerpt_fr ?? null,
+          category: (attrs as BlogPost).category ?? "",
+          published: Boolean((attrs as BlogPost).published),
+          createdAt: (attrs as BlogPost).createdAt ?? "",
+        } satisfies BlogPost;
+      })
+    );
   };
   const fetchSubscribers = async () => {
-    const { data } = await supabase.from("newsletter_subscribers").select("*").order("subscribed_at", { ascending: false });
-    if (data) setSubscribers(data);
+    const token = getAuthToken();
+    if (!token) return;
+    type StrapiSubscriberItem = {
+      id: string | number;
+      attributes?: {
+        email?: string;
+        subscribed_at?: string;
+        active?: boolean;
+      };
+    };
+
+    const res = await strapiFetch<{ data: unknown[] }>(
+      "/api/newsletter-subscribers?sort=subscribed_at:desc&pagination[pageSize]=100",
+      { token }
+    );
+    const items = res.data || [];
+    setSubscribers(
+      items.map((item) => {
+        const it = item as StrapiSubscriberItem;
+        const attrs = it.attributes ?? {};
+        return {
+          id: String(it.id),
+          email: attrs.email ?? "",
+          subscribed_at: attrs.subscribed_at ?? "",
+          active: Boolean(attrs.active),
+        } satisfies Subscriber;
+      })
+    );
   };
 
   const handleCreateEvent = async () => {
-    const { error } = await supabase.from("events").insert({
-      title: newEvent.title, title_fr: newEvent.title_fr || null,
-      description: newEvent.description || null, description_fr: newEvent.description_fr || null,
-      date: newEvent.date, location: newEvent.location, type: newEvent.type,
-      upcoming: newEvent.upcoming, created_by: user?.id,
-    });
-    if (!error) {
+    const token = getAuthToken();
+    if (!token) return;
+    try {
+      await strapiFetch("/api/events", {
+        token,
+        method: "POST",
+        body: JSON.stringify({
+          data: {
+            title: newEvent.title,
+            title_fr: newEvent.title_fr || null,
+            description: newEvent.description || null,
+            description_fr: newEvent.description_fr || null,
+            date: newEvent.date,
+            location: newEvent.location,
+            type: newEvent.type,
+            upcoming: newEvent.upcoming,
+          },
+        }),
+      });
+
       toast({ title: t("admin.eventCreated") });
       setShowCreateDialog(false);
       setNewEvent({ title: "", title_fr: "", description: "", description_fr: "", date: "", location: "", type: "Workshop", upcoming: true });
-      fetchEvents();
-    } else toast({ title: t("admin.error"), variant: "destructive" });
+      await fetchEvents();
+    } catch {
+      toast({ title: t("admin.error"), variant: "destructive" });
+    }
   };
 
   const handleDeleteEvent = async (id: string) => {
-    const { error } = await supabase.from("events").delete().eq("id", id);
-    if (!error) { toast({ title: t("admin.eventDeleted") }); fetchEvents(); fetchRegistrations(); }
+    const token = getAuthToken();
+    if (!token) return;
+    try {
+      await strapiFetch(`/api/events/${id}`, { token, method: "DELETE" });
+      toast({ title: t("admin.eventDeleted") });
+      await fetchEvents();
+      await fetchRegistrations();
+    } catch {
+      toast({ title: t("admin.error"), variant: "destructive" });
+    }
   };
 
   const handleDeleteRegistration = async (id: string) => {
-    const { error } = await supabase.from("event_registrations").delete().eq("id", id);
-    if (!error) { toast({ title: t("admin.registrationDeleted") }); fetchRegistrations(); }
+    const token = getAuthToken();
+    if (!token) return;
+    try {
+      await strapiFetch(`/api/event-registrations/${id}`, { token, method: "DELETE" });
+      toast({ title: t("admin.registrationDeleted") });
+      await fetchRegistrations();
+    } catch {
+      toast({ title: t("admin.error"), variant: "destructive" });
+    }
   };
 
   const handleCreateOrUpdatePost = async () => {
-    if (editingPost) {
-      const { error } = await supabase.from("blog_posts").update({
-        title: newPost.title, title_fr: newPost.title_fr || null,
-        content: newPost.content || null, content_fr: newPost.content_fr || null,
-        excerpt: newPost.excerpt || null, excerpt_fr: newPost.excerpt_fr || null,
-        category: newPost.category, published: newPost.published,
-      }).eq("id", editingPost.id);
-      if (!error) { toast({ title: t("admin.postUpdated") }); }
-      else toast({ title: t("admin.error"), variant: "destructive" });
-    } else {
-      const { error } = await supabase.from("blog_posts").insert({
-        title: newPost.title, title_fr: newPost.title_fr || null,
-        content: newPost.content || null, content_fr: newPost.content_fr || null,
-        excerpt: newPost.excerpt || null, excerpt_fr: newPost.excerpt_fr || null,
-        category: newPost.category, published: newPost.published, created_by: user?.id,
-      });
-      if (!error) { toast({ title: t("admin.postCreated") }); }
-      else toast({ title: t("admin.error"), variant: "destructive" });
+    const token = getAuthToken();
+    if (!token) return;
+
+    const payload = {
+      title: newPost.title,
+      title_fr: newPost.title_fr || null,
+      content: newPost.content || null,
+      content_fr: newPost.content_fr || null,
+      excerpt: newPost.excerpt || null,
+      excerpt_fr: newPost.excerpt_fr || null,
+      category: newPost.category,
+      published: newPost.published,
+    };
+
+    try {
+      if (editingPost) {
+        await strapiFetch(`/api/blog-posts/${editingPost.id}`, {
+          token,
+          method: "PUT",
+          body: JSON.stringify({ data: payload }),
+        });
+        toast({ title: t("admin.postUpdated") });
+      } else {
+        await strapiFetch("/api/blog-posts", {
+          token,
+          method: "POST",
+          body: JSON.stringify({ data: payload }),
+        });
+        toast({ title: t("admin.postCreated") });
+      }
+    } catch {
+      toast({ title: t("admin.error"), variant: "destructive" });
     }
     setShowBlogDialog(false);
     setEditingPost(null);
     setNewPost({ title: "", title_fr: "", content: "", content_fr: "", excerpt: "", excerpt_fr: "", category: "Announcement", published: false });
-    fetchBlogPosts();
+    await fetchBlogPosts();
   };
 
   const handleEditPost = (post: BlogPost) => {
@@ -154,13 +335,27 @@ const AdminDashboard = () => {
   };
 
   const handleDeletePost = async (id: string) => {
-    const { error } = await supabase.from("blog_posts").delete().eq("id", id);
-    if (!error) { toast({ title: t("admin.postDeleted") }); fetchBlogPosts(); }
+    const token = getAuthToken();
+    if (!token) return;
+    try {
+      await strapiFetch(`/api/blog-posts/${id}`, { token, method: "DELETE" });
+      toast({ title: t("admin.postDeleted") });
+      await fetchBlogPosts();
+    } catch {
+      toast({ title: t("admin.error"), variant: "destructive" });
+    }
   };
 
   const handleDeleteSubscriber = async (id: string) => {
-    const { error } = await supabase.from("newsletter_subscribers").delete().eq("id", id);
-    if (!error) { toast({ title: t("admin.subscriberDeleted") }); fetchSubscribers(); }
+    const token = getAuthToken();
+    if (!token) return;
+    try {
+      await strapiFetch(`/api/newsletter-subscribers/${id}`, { token, method: "DELETE" });
+      toast({ title: t("admin.subscriberDeleted") });
+      await fetchSubscribers();
+    } catch {
+      toast({ title: t("admin.error"), variant: "destructive" });
+    }
   };
 
   const handleSignOut = async () => { await signOut(); navigate("/"); };
@@ -319,7 +514,7 @@ const AdminDashboard = () => {
                         <TableCell className="font-medium">{reg.full_name}</TableCell>
                         <TableCell>{reg.email}</TableCell>
                         <TableCell>{reg.phone || "—"}</TableCell>
-                        <TableCell>{new Date(reg.created_at).toLocaleDateString()}</TableCell>
+                        <TableCell>{new Date(reg.createdAt).toLocaleDateString()}</TableCell>
                         <TableCell className="text-right">
                           <Button variant="ghost" size="sm" onClick={() => handleDeleteRegistration(reg.id)} className="text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button>
                         </TableCell>
@@ -389,7 +584,7 @@ const AdminDashboard = () => {
                             {post.published ? t("admin.publishedStatus") : t("admin.draft")}
                           </span>
                         </TableCell>
-                        <TableCell>{new Date(post.created_at).toLocaleDateString()}</TableCell>
+                        <TableCell>{new Date(post.createdAt).toLocaleDateString()}</TableCell>
                         <TableCell className="text-right flex justify-end gap-1">
                           <Button variant="ghost" size="sm" onClick={() => handleEditPost(post)}><Edit className="h-4 w-4" /></Button>
                           <Button variant="ghost" size="sm" onClick={() => handleDeletePost(post.id)} className="text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button>

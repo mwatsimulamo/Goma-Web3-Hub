@@ -5,11 +5,11 @@ import { useTranslation } from "react-i18next";
 import { Calendar, MapPin, ArrowRight, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
+import { strapiFetch } from "@/lib/strapi";
 
 const fadeUp = { initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.6 } };
 
@@ -49,9 +49,47 @@ const Events = () => {
   useEffect(() => { fetchEvents(); }, []);
 
   const fetchEvents = async () => {
-    const { data } = await supabase.from("events").select("*").order("created_at", { ascending: false });
-    if (data) setEvents(data);
-    setLoading(false);
+    try {
+      type StrapiEventItem = {
+        id: string | number;
+        attributes?: {
+          title?: string;
+          title_fr?: string | null;
+          description?: string | null;
+          description_fr?: string | null;
+          date?: string;
+          location?: string;
+          type?: string;
+          upcoming?: boolean;
+        };
+      };
+
+      const res = await strapiFetch<{ data: unknown[] }>(
+        "/api/events?sort=createdAt:desc&populate=image&pagination[pageSize]=100"
+      );
+      const items = res.data || [];
+      const mapped: EventData[] = items
+        .map((item) => {
+          const it = item as StrapiEventItem;
+          return {
+            id: String(it.id),
+            title: it.attributes?.title ?? "",
+            title_fr: it.attributes?.title_fr ?? null,
+            description: it.attributes?.description ?? null,
+            description_fr: it.attributes?.description_fr ?? null,
+            date: it.attributes?.date ?? "",
+            location: it.attributes?.location ?? "",
+            type: it.attributes?.type ?? "",
+            upcoming: !!it.attributes?.upcoming,
+          };
+        })
+        .filter((e) => e.id && e.date && e.location && e.type);
+      if (mapped.length) setEvents(mapped);
+    } catch {
+      // Fallback: keep using hardcoded events
+    } finally {
+      setLoading(false);
+    }
   };
 
   const isPast = (dateStr: string) => {
@@ -72,22 +110,36 @@ const Events = () => {
     e.preventDefault();
     if (!registerEventId) return;
     setSubmitting(true);
-    const { error } = await supabase.from("event_registrations").insert({
-      event_id: registerEventId,
-      full_name: regForm.full_name,
-      email: regForm.email,
-      phone: regForm.phone || null,
-    });
-    if (error) {
-      if (error.code === "23505") {
+    try {
+      await strapiFetch("/api/event-registrations", {
+        method: "POST",
+        body: JSON.stringify({
+          data: {
+            event: registerEventId,
+            full_name: regForm.full_name,
+            email: regForm.email,
+            phone: regForm.phone || null,
+          },
+        }),
+      });
+
+      toast({ title: t("events.registerSuccess") });
+      setRegisterEventId(null);
+      setRegForm({ full_name: "", email: "", phone: "" });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "";
+      const status = msg.includes("409")
+        ? 409
+        : msg.toLowerCase().includes("duplicate")
+          ? 409
+          : null;
+
+      // Sans code d'erreur Supabase, on retombe sur le message générique.
+      if (status === 409) {
         toast({ title: t("events.alreadyRegistered"), variant: "destructive" });
       } else {
         toast({ title: t("events.registerError"), variant: "destructive" });
       }
-    } else {
-      toast({ title: t("events.registerSuccess") });
-      setRegisterEventId(null);
-      setRegForm({ full_name: "", email: "", phone: "" });
     }
     setSubmitting(false);
   };

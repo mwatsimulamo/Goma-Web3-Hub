@@ -5,12 +5,12 @@ import { motion } from "framer-motion";
 import { Lock, Mail, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useAuth } from "@/hooks/useAuth";
+import { useStrapiAuth } from "@/hooks/useStrapiAuth";
 
 const AdminLogin = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { signIn } = useAuth();
+  const { signIn } = useStrapiAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");

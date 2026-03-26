@@ -3,17 +3,40 @@ import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Mail, MapPin, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { strapiFetch } from "@/lib/strapi";
 
 const fadeUp = { initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.6 } };
 
 const Contact = () => {
   const { t } = useTranslation();
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert(t("contact.sent"));
-    setFormData({ name: "", email: "", subject: "", message: "" });
+    setSubmitting(true);
+    try {
+      await strapiFetch("/api/contact-messages", {
+        method: "POST",
+        body: JSON.stringify({
+          data: {
+            name: formData.name,
+            email: formData.email,
+            subject: formData.subject,
+            message: formData.message,
+          },
+        }),
+      });
+
+      toast({ title: t("contact.sent") });
+      setFormData({ name: "", email: "", subject: "", message: "" });
+    } catch {
+      toast({ title: t("admin.error"), variant: "destructive" });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -37,7 +60,9 @@ const Contact = () => {
                 <input type="email" placeholder={t("contact.email")} required value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="w-full px-4 py-3 rounded-lg bg-secondary border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" />
                 <input type="text" placeholder={t("contact.subject")} required value={formData.subject} onChange={(e) => setFormData({ ...formData, subject: e.target.value })} className="w-full px-4 py-3 rounded-lg bg-secondary border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" />
                 <textarea placeholder={t("contact.message")} required rows={5} value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} className="w-full px-4 py-3 rounded-lg bg-secondary border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none" />
-                <Button variant="glow" size="lg" type="submit" className="w-full">{t("contact.send")} <Send className="ml-2 h-4 w-4" /></Button>
+                <Button variant="glow" size="lg" type="submit" className="w-full" disabled={submitting}>
+                  {submitting ? t("events.submitting") : t("contact.send")} <Send className="ml-2 h-4 w-4" />
+                </Button>
               </form>
             </motion.div>
 

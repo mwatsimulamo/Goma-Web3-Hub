@@ -6,8 +6,8 @@ import { Calendar, ArrowLeft, Share2, MessageCircle, Send, Facebook, Twitter, Li
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { mediaToUrl, strapiFetch } from "@/lib/strapi";
 
 interface BlogPostData {
   id: string;
@@ -44,12 +44,75 @@ const BlogPost = () => {
   useEffect(() => {
     if (!id) return;
     const fetchData = async () => {
+      type StrapiBlogPostItem = {
+        id: string | number;
+        attributes?: {
+          title?: string;
+          title_fr?: string | null;
+          content?: string | null;
+          content_fr?: string | null;
+          excerpt?: string | null;
+          excerpt_fr?: string | null;
+          category?: string;
+          published?: boolean;
+          createdAt?: string;
+          created_at?: string;
+          image?: unknown;
+        };
+      };
+
+      type StrapiBlogCommentItem = {
+        id: string | number;
+        attributes?: {
+          author_name?: string;
+          content?: string;
+          createdAt?: string;
+          created_at?: string;
+        };
+      };
+
       const [postRes, commentsRes] = await Promise.all([
-        supabase.from("blog_posts").select("*").eq("id", id).eq("published", true).single(),
-        supabase.from("blog_comments").select("id, author_name, content, created_at").eq("post_id", id).order("created_at", { ascending: true }),
+        strapiFetch<{ data: unknown }>(`/api/blog-posts/${id}?populate=image`),
+        strapiFetch<{ data: unknown[] }>(
+          `/api/blog-comments?filters[post][id][$eq]=${id}&sort=createdAt:asc&pagination[pageSize]=100`
+        ),
       ]);
-      if (postRes.data) setPost(postRes.data);
-      if (commentsRes.data) setComments(commentsRes.data);
+      const detail = postRes.data as StrapiBlogPostItem | undefined;
+      if (detail?.attributes) {
+        const attrs = detail.attributes;
+        if (attrs.published === true) {
+          setPost({
+            id: String(detail.id),
+            title: attrs.title,
+            title_fr: attrs.title_fr ?? null,
+            content: attrs.content ?? null,
+            content_fr: attrs.content_fr ?? null,
+            excerpt: attrs.excerpt ?? null,
+            excerpt_fr: attrs.excerpt_fr ?? null,
+            category: attrs.category,
+            created_at: attrs.createdAt ?? attrs.created_at ?? "",
+            image_url: mediaToUrl(attrs.image),
+          });
+        } else {
+          setPost(null);
+        }
+      }
+
+      if (commentsRes?.data?.length) {
+        setComments(
+          commentsRes.data.map((c) => {
+            const item = c as StrapiBlogCommentItem;
+            return {
+              id: String(item.id),
+              author_name: item.attributes?.author_name ?? "",
+              content: item.attributes?.content ?? "",
+              created_at: item.attributes?.createdAt ?? item.attributes?.created_at ?? "",
+            };
+          })
+        );
+      } else {
+        setComments([]);
+      }
       setLoading(false);
     };
     fetchData();
@@ -59,20 +122,38 @@ const BlogPost = () => {
     e.preventDefault();
     if (!id) return;
     setSubmitting(true);
-    const { error } = await supabase.from("blog_comments").insert({
-      post_id: id,
-      author_name: commentForm.author_name,
-      author_email: commentForm.author_email,
-      content: commentForm.content,
-    });
-    if (error) {
-      toast({ title: t("admin.error"), variant: "destructive" });
-    } else {
+    try {
+      await strapiFetch("/api/blog-comments", {
+        method: "POST",
+        body: JSON.stringify({
+          data: {
+            post: id,
+            author_name: commentForm.author_name,
+            author_email: commentForm.author_email,
+            content: commentForm.content,
+          },
+        }),
+      });
+
       toast({ title: t("blog.commentAdded") });
       setCommentForm({ author_name: "", author_email: "", content: "" });
-      // Refresh comments
-      const { data } = await supabase.from("blog_comments").select("id, author_name, content, created_at").eq("post_id", id).order("created_at", { ascending: true });
-      if (data) setComments(data);
+
+      const commentsRes = await strapiFetch<{ data: unknown[] }>(
+        `/api/blog-comments?filters[post][id][$eq]=${id}&sort=createdAt:asc&pagination[pageSize]=100`
+      );
+      setComments(
+        commentsRes.data.map((c) => {
+          const item = c as { id: string | number; attributes?: { author_name?: string; content?: string; createdAt?: string; created_at?: string } };
+          return {
+            id: String(item.id),
+            author_name: item.attributes?.author_name ?? "",
+            content: item.attributes?.content ?? "",
+            created_at: item.attributes?.createdAt ?? item.attributes?.created_at ?? "",
+          };
+        })
+      );
+    } catch {
+      toast({ title: t("admin.error"), variant: "destructive" });
     }
     setSubmitting(false);
   };
@@ -140,7 +221,7 @@ const BlogPost = () => {
             <button onClick={copyLink} className="p-2 rounded-lg bg-secondary hover:bg-primary/20 transition-colors"><LinkIcon className="h-4 w-4" /></button>
           </div>
 
-          {/* Comments */}
+          {/* Commentaires */}
           <div>
             <h2 className="font-display text-2xl font-bold mb-6 flex items-center gap-2">
               <MessageCircle className="h-5 w-5 text-primary" />

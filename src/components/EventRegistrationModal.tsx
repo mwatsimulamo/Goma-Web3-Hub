@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { X, Calendar, MapPin, Users, Mail, Phone, User } from 'lucide-react';
 import './EventRegistrationModal.css';
+import { useToast } from "@/hooks/use-toast";
+import { strapiFetch } from "@/lib/strapi";
 
 interface Event {
+  id?: string;
   title: string;
   date: string;
   type: string;
@@ -27,6 +30,7 @@ const EventRegistrationModal = ({ isOpen, onClose, event }: EventRegistrationMod
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -39,24 +43,39 @@ const EventRegistrationModal = ({ isOpen, onClose, event }: EventRegistrationMod
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simuler l'envoi du formulaire
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Ici vous pouvez ajouter la logique d'envoi à votre backend
-    console.log('Inscription événement:', { event, formData });
-    
-    setIsSubmitting(false);
-    onClose();
-    // Réinitialiser le formulaire
-    setFormData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      organization: '',
-      message: ''
-    });
+
+    try {
+      if (!event?.id) throw new Error("Event ID manquant");
+
+      await strapiFetch("/api/event-registrations", {
+        method: "POST",
+        body: JSON.stringify({
+          data: {
+            event: event.id,
+            full_name: `${formData.firstName} ${formData.lastName}`.trim(),
+            email: formData.email,
+            phone: formData.phone || null,
+            organization: formData.organization || null,
+            message: formData.message || null,
+          },
+        }),
+      });
+
+      toast({ title: "Inscription réussie !" });
+      onClose();
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        organization: '',
+        message: ''
+      });
+    } catch {
+      toast({ title: "Impossible d'envoyer la demande.", variant: "destructive" });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!isOpen || !event) return null;

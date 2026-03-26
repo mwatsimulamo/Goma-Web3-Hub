@@ -5,11 +5,11 @@ import { useTranslation } from "react-i18next";
 import { Calendar, MapPin, ArrowLeft, ArrowRight, Clock, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
+import { mediaToUrl, strapiFetch } from "@/lib/strapi";
 
 interface EventData {
   id: string;
@@ -39,9 +39,44 @@ const EventDetail = () => {
   useEffect(() => {
     if (!id) return;
     const fetchEvent = async () => {
-      const { data } = await supabase.from("events").select("*").eq("id", id).single();
-      if (data) setEvent(data);
-      setLoading(false);
+      try {
+        type StrapiEventDetailItem = {
+          id: string | number;
+          attributes?: {
+            title?: string;
+            title_fr?: string | null;
+            description?: string | null;
+            description_fr?: string | null;
+            date?: string;
+            location?: string;
+            type?: string;
+            upcoming?: boolean;
+            image?: unknown;
+          };
+        };
+
+        const res = await strapiFetch<{ data: unknown }>(`/api/events/${id}?populate=image`);
+        const item = res.data;
+        const detail = item as StrapiEventDetailItem;
+        if (detail?.attributes) {
+          setEvent({
+            id: String(detail.id),
+            title: detail.attributes.title ?? "",
+            title_fr: detail.attributes.title_fr ?? null,
+            description: detail.attributes.description ?? null,
+            description_fr: detail.attributes.description_fr ?? null,
+            date: detail.attributes.date ?? "",
+            location: detail.attributes.location ?? "",
+            type: detail.attributes.type ?? "",
+            upcoming: !!detail.attributes.upcoming,
+            image_url: mediaToUrl(detail.attributes.image),
+          });
+        }
+      } catch {
+        // keep loading false; UI will show not found
+      } finally {
+        setLoading(false);
+      }
     };
     fetchEvent();
   }, [id]);
@@ -58,22 +93,34 @@ const EventDetail = () => {
     e.preventDefault();
     if (!id) return;
     setSubmitting(true);
-    const { error } = await supabase.from("event_registrations").insert({
-      event_id: id,
-      full_name: regForm.full_name,
-      email: regForm.email,
-      phone: regForm.phone || null,
-    });
-    if (error) {
-      if (error.code === "23505") {
+    try {
+      await strapiFetch("/api/event-registrations", {
+        method: "POST",
+        body: JSON.stringify({
+          data: {
+            event: id,
+            full_name: regForm.full_name,
+            email: regForm.email,
+            phone: regForm.phone || null,
+          },
+        }),
+      });
+      toast({ title: t("events.registerSuccess") });
+      setShowRegister(false);
+      setRegForm({ full_name: "", email: "", phone: "" });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "";
+      const status = msg.includes("409")
+        ? 409
+        : msg.toLowerCase().includes("duplicate")
+          ? 409
+          : null;
+
+      if (status === 409) {
         toast({ title: t("events.alreadyRegistered"), variant: "destructive" });
       } else {
         toast({ title: t("events.registerError"), variant: "destructive" });
       }
-    } else {
-      toast({ title: t("events.registerSuccess") });
-      setShowRegister(false);
-      setRegForm({ full_name: "", email: "", phone: "" });
     }
     setSubmitting(false);
   };

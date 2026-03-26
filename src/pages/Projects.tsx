@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { strapiFetch } from "@/lib/strapi";
 
 const fadeUp = { initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.6 } };
 
@@ -10,11 +11,21 @@ const Projects = () => {
   const { t } = useTranslation();
   const [active, setActive] = useState("All");
 
-  const allProjects = [
+  type ProjectCard = {
+    name: string;
+    category: string;
+    description: string;
+    tech?: string;
+    team?: string;
+  };
+
+  const hardcodedProjects: ProjectCard[] = [
     { name: "Mtidano NFTree", category: "Environnement", tech: "Cardano, React", description: t("projects.proj1Desc"), team: "Team Alpha" },
     { name: "Onboarding Program", category: "Education & Intégration", tech: "Cardano, IPFS", description: t("projects.proj2Desc"), team: "Team Beta" },
     { name: "Genealogy", category: "Social Impact", tech: "Polygon, TheGraph", description: t("projects.proj3Desc"), team: "Team Gamma" },
   ];
+
+  const [allProjects, setAllProjects] = useState<ProjectCard[]>(hardcodedProjects);
 
   const categories = [
     { key: "All", label: t("projects.all") },
@@ -24,6 +35,38 @@ const Projects = () => {
     { key: "Infrastructure", label: "Infrastructure" },
     { key: "AI + Blockchain", label: "AI + Blockchain" },
   ];
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const res = await strapiFetch<{ data: unknown[] }>(
+          "/api/projects?sort=createdAt:desc&pagination[pageSize]=100"
+        );
+        const items = res.data || [];
+
+        const mapped: ProjectCard[] = items
+          .map((item) => {
+            const it = item as { attributes?: Record<string, unknown> };
+            const attrs = (it.attributes ?? {}) as Record<string, unknown>;
+            const name = String(attrs.name ?? "");
+            const category = String(attrs.category ?? "");
+            const description = String(attrs.description ?? "");
+            const tech = attrs.tech ? String(attrs.tech) : undefined;
+            const team = attrs.team ? String(attrs.team) : undefined;
+            if (!name || !category) return null;
+            return { name, category, description, tech, team };
+          })
+          .filter((p): p is ProjectCard => p !== null);
+
+        if (mapped.length) setAllProjects(mapped);
+      } catch {
+        // fallback hardcoded
+      }
+    };
+
+    fetchProjects();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const filtered = active === "All" ? allProjects : allProjects.filter((p) => p.category === active);
 
@@ -55,8 +98,16 @@ const Projects = () => {
                 <h3 className="font-display text-xl font-semibold mt-4 mb-2">{project.name}</h3>
                 <p className="text-sm text-muted-foreground mb-4">{project.description}</p>
                 <div className="text-xs text-muted-foreground space-y-1 mb-4">
-                  <p><span className="text-foreground font-medium">Tech:</span> {project.tech}</p>
-                  <p><span className="text-foreground font-medium">Team:</span> {project.team}</p>
+                  {project.tech ? (
+                    <p>
+                      <span className="text-foreground font-medium">Tech:</span> {project.tech}
+                    </p>
+                  ) : null}
+                  {project.team ? (
+                    <p>
+                      <span className="text-foreground font-medium">Team:</span> {project.team}
+                    </p>
+                  ) : null}
                 </div>
                 <Button variant="link" className="p-0 h-auto text-primary">{t("projects.viewProject")} <ExternalLink className="ml-1 h-3 w-3" /></Button>
               </motion.div>

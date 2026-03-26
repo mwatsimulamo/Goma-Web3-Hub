@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import type { ElementType } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -11,9 +12,11 @@ import Ticker from "@/components/Ticker";
 import EventRegistrationModal from "@/components/EventRegistrationModal";
 import { useHeroAnimations } from "@/hooks/useHeroAnimations";
 import { useCountUp } from "@/hooks/useCountUp";
+import { mediaToUrl, strapiFetch } from "@/lib/strapi";
 import '@/components/EventCard.css';
 
 interface Event {
+  id?: string;
   title: string;
   date: string;
   type: string;
@@ -24,8 +27,57 @@ interface Event {
   fullDescription: string;
 }
 
+const StatCard = ({
+  stat,
+  index,
+}: {
+  stat: { icon: ElementType; value: number; label: string; suffix: string };
+  index: number;
+}) => {
+  const { count, elementRef } = useCountUp({
+    end: stat.value,
+    duration: 2500,
+    startOnView: true,
+  });
+
+  const Icon = stat.icon;
+
+  return (
+    <motion.div
+      key={index}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: index * 0.1 }}
+      viewport={{ once: true }}
+      className="text-center"
+    >
+      <ModernCard className="p-8 text-center">
+        <Icon
+          className={`h-10 w-10 mx-auto mb-4 ${
+            index === 0
+              ? "text-orange-500"
+              : index === 1
+                ? "text-orange-600"
+                : index === 2
+                  ? "text-orange-400"
+                  : "text-orange-300"
+          }`}
+        />
+        <div ref={elementRef} className="text-4xl font-bold mb-2 text-card-foreground">
+          {count}
+          {stat.suffix}
+        </div>
+        <div className="text-sm font-medium text-muted-foreground">{stat.label}</div>
+      </ModernCard>
+    </motion.div>
+  );
+};
+
 const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
+  // Les événements de la section "Événements à venir" sont pilotés par Strapi.
+  // On garde une valeur de fallback pour éviter une page vide si l'API n'est pas joignable.
+  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const { heroRef, titleRef, buttonsRef, navigationRef } = useHeroAnimations(isLoading);
@@ -47,7 +99,7 @@ const Index = () => {
     { icon: Award, value: 1000, label: "Bénéficiaires", suffix: "+" },
   ];
 
-  const upcomingEvents = [
+  const hardcodedUpcomingEvents: Event[] = [
     { 
       title: "Workshop Blockchain Fondamentaux", 
       date: "25 Mars 2026", 
@@ -80,7 +132,69 @@ const Index = () => {
     },
   ];
 
-  const projects = [
+  useEffect(() => {
+    setUpcomingEvents(hardcodedUpcomingEvents);
+
+    const fetchUpcoming = async () => {
+      try {
+        type StrapiEventItem = {
+          id: string | number;
+          attributes?: {
+            title?: string;
+            title_fr?: string | null;
+            date?: string;
+            type?: string;
+            location?: string;
+            time?: string;
+            image?: unknown;
+            description?: string | null;
+            description_fr?: string | null;
+          };
+        };
+
+        const res = await strapiFetch<{ data: unknown[] }>(
+          "/api/events?filters[upcoming][$eq]=true&sort=date:asc&populate=image&pagination[pageSize]=6"
+        );
+        const items = res.data || [];
+
+        const formatDate = (d: string) => {
+          try {
+            const dt = new Date(d);
+            return dt.toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
+          } catch {
+            return d;
+          }
+        };
+
+        const mapped: Event[] = items
+          .map((item) => {
+            const it = item as StrapiEventItem;
+            return {
+              id: String(it.id),
+              title: it.attributes?.title_fr ?? it.attributes?.title ?? "",
+              date: formatDate(it.attributes?.date ?? ""),
+              type: it.attributes?.type ?? "",
+              location: it.attributes?.location ?? "",
+              time: it.attributes?.time ?? "",
+              image: mediaToUrl(it.attributes?.image) ?? "",
+              description: it.attributes?.description_fr ?? it.attributes?.description ?? "",
+              fullDescription: it.attributes?.description_fr ?? it.attributes?.description ?? "",
+            };
+          })
+          .filter((e) => e.id && e.title && e.date && e.type && e.location);
+
+        if (mapped.length) setUpcomingEvents(mapped);
+      } catch {
+        // fallback déjà présent (hardcodedUpcomingEvents)
+      }
+    };
+
+    fetchUpcoming();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  type HomeProject = { name: string; category: string; description: string };
+  const hardcodedProjects: HomeProject[] = [
     { 
       name: "KivuPay", 
       category: "DeFi", 
@@ -98,7 +212,10 @@ const Index = () => {
     },
   ];
 
-  const partners = [
+  const [projectsList, setProjectsList] = useState<HomeProject[]>(hardcodedProjects);
+
+  type HomePartner = { name: string; logo: string; url: string };
+  const hardcodedPartners: HomePartner[] = [
     {
       name: "Apex Fusion",
       logo: "/partners/apex.png",
@@ -125,6 +242,62 @@ const Index = () => {
       url: "https://isdrgl.com",
     },
   ];
+
+  const [partnersList, setPartnersList] = useState<HomePartner[]>(hardcodedPartners);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const res = await strapiFetch<{ data: unknown[] }>(
+          "/api/projects?sort=createdAt:desc&pagination[pageSize]=100"
+        );
+        const items = res.data || [];
+        const mapped: HomeProject[] = items
+          .map((item) => {
+            const it = item as { attributes?: Record<string, unknown>; id?: string | number };
+            const attrs = (it.attributes ?? {}) as Record<string, unknown>;
+            const name = String(attrs.name ?? "");
+            const category = String(attrs.category ?? "");
+            const description = String(attrs.description ?? "");
+            if (!name || !category) return null;
+            return { name, category, description };
+          })
+          .filter((p): p is HomeProject => p !== null);
+
+        if (mapped.length) setProjectsList(mapped);
+      } catch {
+        // fallback: hardcodedProjects
+      }
+    };
+
+    const fetchPartners = async () => {
+      try {
+        const res = await strapiFetch<{ data: unknown[] }>(
+          "/api/partners?populate=logo&pagination[pageSize]=50"
+        );
+        const items = res.data || [];
+        const mapped: HomePartner[] = items
+          .map((item) => {
+            const it = item as { attributes?: Record<string, unknown>; id?: string | number };
+            const attrs = (it.attributes ?? {}) as Record<string, unknown>;
+            const name = String(attrs.name ?? "");
+            const url = String(attrs.url ?? "");
+            const logoUrl = mediaToUrl(attrs.logo) ?? "";
+            if (!name || !url || !logoUrl) return null;
+            return { name, url, logo: logoUrl };
+          })
+          .filter((p): p is HomePartner => p !== null);
+
+        if (mapped.length) setPartnersList(mapped);
+      } catch {
+        // fallback: hardcodedPartners
+      }
+    };
+
+    fetchProjects();
+    fetchPartners();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
@@ -200,40 +373,9 @@ const Index = () => {
           viewport={{ once: true }}
         >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, i) => {
-              const { count, elementRef } = useCountUp({ 
-                end: stat.value, 
-                duration: 2500, // 2.5 secondes pour toutes les animations
-                startOnView: true 
-              });
-              
-              return (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: i * 0.1 }}
-                  viewport={{ once: true }}
-                  className="text-center"
-                >
-                  <ModernCard className="p-8 text-center">
-                    <stat.icon className={`h-10 w-10 mx-auto mb-4 ${
-                      i === 0 ? 'text-orange-500' : 
-                      i === 1 ? 'text-orange-600' : 
-                      i === 2 ? 'text-orange-400' : 
-                      'text-orange-300'
-                    }`} />
-                    <div 
-                      ref={elementRef}
-                      className="text-4xl font-bold mb-2 text-card-foreground"
-                    >
-                      {count}{stat.suffix}
-                    </div>
-                    <div className="text-sm font-medium text-muted-foreground">{stat.label}</div>
-                  </ModernCard>
-                </motion.div>
-              );
-            })}
+            {stats.map((stat, i) => (
+              <StatCard key={i} stat={stat} index={i} />
+            ))}
           </div>
         </motion.div>
       </ModernSectionWrapper>
@@ -361,7 +503,7 @@ const Index = () => {
           </h2>
           
           <div className="grid md:grid-cols-3 gap-8">
-            {projects.map((project, i) => (
+            {projectsList.map((project, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 30 }}
@@ -404,7 +546,7 @@ const Index = () => {
 
           <div className="relative overflow-hidden bg-gradient-to-r from-transparent via-white/5 to-transparent py-8">
             <div className="flex animate-scroll">
-              {[...partners, ...partners].map((partner, i) => (
+              {[...partnersList, ...partnersList].map((partner, i) => (
                 <div
                   key={`${partner.name}-${i}`}
                   className="flex flex-col items-center min-w-[200px] max-w-[220px] mx-4 flex-shrink-0"
