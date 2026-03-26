@@ -336,9 +336,10 @@ const About = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             viewport={{ once: true }}
-            className="content-card"
+            className="content-card vision-card text-center"
           >
             <h3
+              className="vision-title"
               style={{
                 fontSize: "28px",
                 fontWeight: "600",
@@ -351,6 +352,7 @@ const About = () => {
               <span style={{ color: "var(--accent-orange)" }}>Vision</span>
             </h3>
             <p
+              className="vision-description"
               style={{
                 fontSize: "18px",
                 lineHeight: "1.7",
@@ -476,7 +478,7 @@ const About = () => {
             </p>
           </motion.div>
 
-          <div className="values-grid">
+          <div className="values-grid services-grid">
             {services.map((service, i) => (
               <motion.div
                 key={i}
@@ -484,13 +486,13 @@ const About = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.08 * i }}
                 viewport={{ once: true }}
-                className="value-card"
+                className="value-card service-card"
               >
-                <span className="value-icon" style={{ color: service.color }}>
+                <span className="value-icon service-icon" style={{ color: service.color }}>
                   {service.icon}
                 </span>
-                <h3 className="value-title">{service.title}</h3>
-                <p className="value-description">{service.description}</p>
+                <h3 className="value-title service-title">{service.title}</h3>
+                <p className="value-description service-description">{service.description}</p>
               </motion.div>
             ))}
           </div>
