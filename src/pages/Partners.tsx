@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SectionHeading from "@/components/SectionHeading";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -98,44 +97,36 @@ const Partners = () => {
 
   return (
     <div>
-      <section className="py-20 hero-gradient">
+      <section className="bg-[#1734a8] py-14 md:py-16 pt-24 md:pt-28">
         <div className="container mx-auto px-4 text-center">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <h1 className="font-display text-4xl md:text-5xl font-bold mb-4">
-              {t("partners.title")} <span className="gradient-text">{t("partners.titleHighlight")}</span>
-            </h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-lg">{t("partners.subtitle")}</p>
-          </motion.div>
-        </div>
-      </section>
+          <motion.h1
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="font-display text-3xl md:text-4xl font-bold mb-10 md:mb-12"
+          >
+            <span className="text-white">{t("partners.title")}</span>{" "}
+            <span className="text-[#ffb800]">{t("partners.titleHighlight")}</span>
+          </motion.h1>
 
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-10">Partners</h2>
-          
-          {/* Partners Marquee */}
-          <div className="relative overflow-hidden bg-gradient-to-r from-transparent via-white/5 to-transparent py-8">
-            <div className="flex animate-scroll">
+          <div className="relative overflow-hidden py-6 md:py-8">
+            <div className="flex w-max animate-scroll gap-5 md:gap-6 pr-5 md:pr-6">
               {[...marqueePartners, ...marqueePartners].map((partner, i) => (
-                <div
-                  key={`${partner.name}-${i}`}
-                  className="flex flex-col items-center min-w-[200px] max-w-[220px] mx-4 flex-shrink-0"
-                >
-                  <img
-                    src={partner.logo}
-                    alt={partner.name}
-                    className="h-16 w-auto object-contain mb-3"
-                    style={{ maxWidth: 160 }}
-                  />
-                  <div className="text-center text-sm text-muted-foreground mb-2 font-medium">{partner.description}</div>
+                <div key={`${partner.name}-${i}`} className="flex-shrink-0">
                   <a
                     href={partner.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-primary hover:underline flex items-center gap-1 text-xs"
+                    className="block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white rounded-2xl"
+                    aria-label={partner.name}
                   >
-                    <span>Visit website</span>
-                    <ExternalLink className="h-3 w-3" />
+                    <div className="bg-black rounded-2xl border border-white/15 p-4 md:p-5 h-[100px] w-[200px] md:h-[108px] md:w-[220px] flex items-center justify-center shadow-md shadow-black/10">
+                      <img
+                        src={partner.logo}
+                        alt=""
+                        className="max-h-[72px] w-full object-contain"
+                        loading="lazy"
+                      />
+                    </div>
                   </a>
                 </div>
               ))}

@@ -13,6 +13,8 @@ interface NavGroup {
   items: { key: string; path: string }[];
 }
 
+type NavEntry = NavGroup | { key: string; path: string };
+
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -21,25 +23,29 @@ const Navbar = () => {
   const { t } = useTranslation();
   const dropdownTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const fallbackNavGroups: (NavGroup | { key: string; path: string })[] = [
+  const fallbackNavGroups: NavEntry[] = [
     { key: "home", path: "/" },
     {
       label: "nav.about",
       items: [
-        { key: "presentation", path: "/about" },
+        { key: "presentation", path: "/about#presentation" },
         { key: "services", path: "/about#services" },
         { key: "team", path: "/about#team" },
-        { key: "partners", path: "/partners" },
-        { key: "contact", path: "/contact" },
+        { key: "partners", path: "/about#partners" },
+        { key: "contact", path: "/about#contact" },
       ],
+    },
+    {
+      key: "projects",
+      path: "/projects",
     },
     {
       label: "nav.ecosystem",
       items: [
-        { key: "projects", path: "/projects" },
-        { key: "events", path: "/events" },
+        { key: "blockchains", path: "/partners" },
         { key: "validators", path: "/validators" },
-        { key: "community", path: "/community" },
+        { key: "events", path: "/events" },
+        { key: "joinOurCommunity", path: "/community" },
       ],
     },
     {
@@ -51,17 +57,69 @@ const Navbar = () => {
         { key: "gallery", path: "/resources#gallery" },
       ],
     },
-    {
-      label: "nav.onboarding",
-      items: [
-        { key: "onboardingWhat", path: "/onboarding#what-is-onboarding" },
-        { key: "impact", path: "/onboarding#impact" },
-        { key: "donate", path: "/onboarding#donate" },
-      ],
-    },
   ];
 
-  const [navGroups, setNavGroups] = useState<(NavGroup | { key: string; path: string })[]>(fallbackNavGroups);
+  const applyRequestedNavStructure = (groups: NavEntry[]): NavEntry[] => {
+    const cleaned = groups
+      .filter((entry) => {
+        if (!("items" in entry)) return true;
+        const normalizedLabel = entry.label.toLowerCase();
+        return !normalizedLabel.includes("onboarding");
+      })
+      .map((entry) => {
+      if (!("items" in entry)) return entry;
+      const normalizedLabel = entry.label.toLowerCase();
+      if (
+        !(
+          normalizedLabel.includes("ecosystem") ||
+          normalizedLabel.includes("ecosysteme") ||
+          normalizedLabel.includes("ecosytem")
+        )
+      ) {
+        return entry;
+      }
+      return {
+        ...entry,
+        items: [
+          { key: "blockchains", path: "/partners" },
+          { key: "validators", path: "/validators" },
+          { key: "events", path: "/events" },
+          { key: "joinOurCommunity", path: "/community" },
+        ],
+      };
+    });
+
+    const withoutProjectsGroup = cleaned.filter(
+      (entry) =>
+        !(
+          "items" in entry &&
+          (entry.label.toLowerCase().includes("projects") || entry.label.toLowerCase().includes("projets"))
+        )
+    );
+    const hasProjectsTopLevel = withoutProjectsGroup.some(
+      (entry) => !("items" in entry) && entry.path === "/projects"
+    );
+    if (hasProjectsTopLevel) return withoutProjectsGroup;
+
+    const aboutIndex = withoutProjectsGroup.findIndex(
+      (entry) => "items" in entry && entry.label.toLowerCase().includes("about")
+    );
+
+    if (aboutIndex === -1) {
+      return [
+        ...withoutProjectsGroup,
+        { key: "projects", path: "/projects" },
+      ];
+    }
+
+    return [
+      ...withoutProjectsGroup.slice(0, aboutIndex + 1),
+      { key: "projects", path: "/projects" },
+      ...withoutProjectsGroup.slice(aboutIndex + 1),
+    ];
+  };
+
+  const [navGroups, setNavGroups] = useState<NavEntry[]>(applyRequestedNavStructure(fallbackNavGroups));
 
   const stripNavKey = (labelKey: string) => {
     if (!labelKey) return labelKey;
@@ -118,10 +176,11 @@ const Navbar = () => {
           .sort((a, b) => a.order - b.order);
 
         if (headerGroups.length) {
-          setNavGroups([
+          const incoming: NavEntry[] = [
             { key: "home", path: "/" },
             ...headerGroups.map((g) => ({ label: g.label, items: g.items })),
-          ]);
+          ];
+          setNavGroups(applyRequestedNavStructure(incoming));
         }
       } catch {
         // Fallback déjà présent
@@ -166,7 +225,7 @@ const Navbar = () => {
           <Link to="/" className="flex items-center gap-3">
             <img src={logo} alt="UJUZI Labs" className="h-10 w-10" />
             <span className="font-display text-xl font-bold text-foreground">
-              UJUZI <span className="text-primary">Labs</span>
+              UJUZI <span className="text-[#ffb800]">Labs</span>
             </span>
           </Link>
 
@@ -181,8 +240,10 @@ const Navbar = () => {
                   onMouseLeave={handleMouseLeave}
                 >
                   <button
-                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap ${
-                      isGroupActive(item) ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                    className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap ${
+                      isGroupActive(item)
+                        ? "text-[#ffb800] bg-[#ffb800]/10"
+                        : "text-muted-foreground hover:text-[#ffb800] hover:bg-[#ffb800]/10"
                     }`}
                   >
                     {t(item.label)}
@@ -194,8 +255,10 @@ const Navbar = () => {
                         <Link
                           key={sub.path}
                           to={sub.path}
-                          className={`block px-4 py-3 text-sm transition-colors whitespace-nowrap ${
-                            isActive(sub.path) ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                          className={`block px-4 py-3 text-sm font-bold transition-colors whitespace-nowrap ${
+                            isActive(sub.path)
+                              ? "text-[#ffb800] bg-[#ffb800]/10"
+                              : "text-muted-foreground hover:text-[#ffb800] hover:bg-[#ffb800]/10"
                           }`}
                         >
                           {t(`nav.${sub.key}`)}
@@ -208,8 +271,10 @@ const Navbar = () => {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap ${
-                    isActive(item.path) ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                  className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors whitespace-nowrap ${
+                    isActive(item.path)
+                      ? "text-[#ffb800] bg-[#ffb800]/10"
+                      : "text-muted-foreground hover:text-[#ffb800] hover:bg-[#ffb800]/10"
                   }`}
                 >
                   {t(`nav.${item.key}`)}
@@ -242,8 +307,10 @@ const Navbar = () => {
                   <div key={item.label}>
                     <button
                       onClick={() => setMobileExpanded(mobileExpanded === item.label ? null : item.label)}
-                      className={`w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
-                        isGroupActive(item) ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                      className={`w-full flex items-center justify-between px-4 py-3 text-sm font-bold rounded-lg transition-colors ${
+                        isGroupActive(item)
+                          ? "text-[#ffb800] bg-[#ffb800]/10"
+                          : "text-muted-foreground hover:text-[#ffb800] hover:bg-[#ffb800]/10"
                       }`}
                     >
                       {t(item.label)}
@@ -256,8 +323,10 @@ const Navbar = () => {
                             key={sub.path}
                             to={sub.path}
                             onClick={() => setMobileOpen(false)}
-                            className={`px-4 py-3 text-sm rounded-lg transition-colors ${
-                              isActive(sub.path) ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                            className={`px-4 py-3 text-sm font-bold rounded-lg transition-colors ${
+                              isActive(sub.path)
+                                ? "text-[#ffb800] bg-[#ffb800]/10"
+                                : "text-muted-foreground hover:text-[#ffb800] hover:bg-[#ffb800]/10"
                             }`}
                           >
                             {t(`nav.${sub.key}`)}
@@ -271,8 +340,10 @@ const Navbar = () => {
                     key={item.path}
                     to={item.path}
                     onClick={() => setMobileOpen(false)}
-                    className={`px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
-                      isActive(item.path) ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                    className={`px-4 py-3 text-sm font-bold rounded-lg transition-colors ${
+                      isActive(item.path)
+                        ? "text-[#ffb800] bg-[#ffb800]/10"
+                        : "text-muted-foreground hover:text-[#ffb800] hover:bg-[#ffb800]/10"
                     }`}
                   >
                     {t(`nav.${item.key}`)}

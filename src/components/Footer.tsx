@@ -114,7 +114,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <h3 className="font-display text-xl font-bold text-foreground">
-              UJUZI <span className="text-primary">Labs</span>
+              UJUZI <span className="text-[#ffb800]">Labs</span>
             </h3>
             <div className="flex items-center gap-2 text-muted-foreground">
               <MapPin className="h-4 w-4" />
@@ -154,11 +154,11 @@ const Footer = () => {
                 </a>
               </div>
               <div className="space-y-2">
-                <a href="mailto:contact@ujiuzilabs.com" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
+                <a href="mailto:contact@ujiuzilabs.com" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-[#ffb800] transition-colors">
                   <Mail className="h-4 w-4" />
                   contact@ujiuzilabs.com
                 </a>
-                <a href="tel:+243974973061" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
+                <a href="tel:+243974973061" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-[#ffb800] transition-colors">
                   <Phone className="h-4 w-4" />
                   +243974973061
                 </a>
@@ -186,7 +186,7 @@ const Footer = () => {
                   <Link
                     key={item.path}
                     to={item.path}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    className="text-sm text-muted-foreground hover:text-[#ffb800] transition-colors"
                   >
                     {resolveLabel(item.labelKey)}
                   </Link>
@@ -212,7 +212,7 @@ const Footer = () => {
                   <Link
                     key={item.path}
                     to={item.path}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    className="text-sm text-muted-foreground hover:text-[#ffb800] transition-colors"
                   >
                     {resolveLabel(item.labelKey)}
                   </Link>
@@ -281,7 +281,7 @@ const Footer = () => {
               />
               <button
                 type="submit"
-                className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+                className="rounded-lg bg-[#ffb800] px-4 py-2 text-sm font-medium text-[#111111] hover:bg-[#e6a600] transition-colors"
                 disabled={submitting}
               >
                 {submitting ? "..." : t("home.subscribe")}
@@ -297,7 +297,7 @@ const Footer = () => {
               Developped by{" "}
               <a
                 href={devMailto}
-                className="text-foreground hover:text-primary transition-colors hover:underline underline-offset-4"
+                className="text-foreground hover:text-[#ffb800] transition-colors hover:underline underline-offset-4"
                 title="Envoyer une demande de création de site web moderne"
               >
                 UJUZI Labs Developpers Team

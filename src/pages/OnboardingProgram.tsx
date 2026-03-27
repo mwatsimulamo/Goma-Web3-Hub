@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { strapiFetch } from "@/lib/strapi";
 import {
+  ArrowLeft,
   HeartHandshake,
   TrendingUp,
   HandCoins,
@@ -230,6 +231,15 @@ const OnboardingProgram = () => {
     <div>
       <section className="py-20 hero-gradient">
         <div className="container mx-auto px-4 text-center">
+          <div className="flex justify-start mb-6">
+            <Link
+              to="/projects"
+              className="inline-flex items-center gap-2 rounded-lg border border-border bg-background/70 px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary/70 transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Retour aux projets
+            </Link>
+          </div>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <h1 className="font-display text-4xl md:text-5xl font-bold mb-4">
               <span className="gradient-text">{t("onboarding.title")}</span>

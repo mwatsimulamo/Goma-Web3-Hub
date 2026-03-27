@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import type { ElementType } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -25,6 +25,26 @@ interface Event {
   image: string;
   description: string;
   fullDescription: string;
+}
+
+interface HomeBlogPost {
+  id: string;
+  title: string;
+  title_fr: string | null;
+  excerpt: string | null;
+  excerpt_fr: string | null;
+  category: string;
+  created_at: string;
+}
+
+interface HomeBlogPost {
+  id: string;
+  title: string;
+  title_fr: string | null;
+  excerpt: string | null;
+  excerpt_fr: string | null;
+  category: string;
+  created_at: string;
 }
 
 const StatCard = ({
@@ -55,12 +75,12 @@ const StatCard = ({
         <Icon
           className={`h-10 w-10 mx-auto mb-4 ${
             index === 0
-              ? "text-orange-500"
+              ? "text-[#ffb800]"
               : index === 1
-                ? "text-orange-600"
+                ? "text-[#ffb800]"
                 : index === 2
-                  ? "text-orange-400"
-                  : "text-orange-300"
+                  ? "text-[#ffb800]"
+                  : "text-[#ffb800]"
           }`}
         />
         <div ref={elementRef} className="text-4xl font-bold mb-2 text-card-foreground">
@@ -80,7 +100,13 @@ const Index = () => {
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const { t, i18n } = useTranslation();
   const { heroRef, titleRef, buttonsRef, navigationRef } = useHeroAnimations(isLoading);
+
+  const innovationSentenceWords = useMemo(
+    () => t("home.innovationMission").split(/\s+/).filter(Boolean),
+    [t, i18n.language]
+  );
 
   const handleOpenModal = (event: Event) => {
     setSelectedEvent(event);
@@ -245,6 +271,70 @@ const Index = () => {
 
   const [partnersList, setPartnersList] = useState<HomePartner[]>(hardcodedPartners);
 
+  const [latestBlogPosts, setLatestBlogPosts] = useState<HomeBlogPost[]>([]);
+  const [blogPostsLoading, setBlogPostsLoading] = useState(true);
+
+  const blogFallbackPosts = useMemo(
+    () =>
+      [
+        { id: "1", title: t("blog.p1Title"), title_fr: null, excerpt: t("blog.p1Excerpt"), excerpt_fr: null, category: "Announcement", created_at: "2026-03-01" },
+        { id: "2", title: t("blog.p2Title"), title_fr: null, excerpt: t("blog.p2Excerpt"), excerpt_fr: null, category: "Event Recap", created_at: "2026-02-20" },
+        { id: "3", title: t("blog.p3Title"), title_fr: null, excerpt: t("blog.p3Excerpt"), excerpt_fr: null, category: "Education", created_at: "2026-02-10" },
+        { id: "4", title: t("blog.p4Title"), title_fr: null, excerpt: t("blog.p4Excerpt"), excerpt_fr: null, category: "Innovation", created_at: "2026-01-28" },
+        { id: "5", title: t("blog.p5Title"), title_fr: null, excerpt: t("blog.p5Excerpt"), excerpt_fr: null, category: "Community", created_at: "2026-01-15" },
+        { id: "6", title: t("blog.p6Title"), title_fr: null, excerpt: t("blog.p6Excerpt"), excerpt_fr: null, category: "Education", created_at: "2026-01-05" },
+      ] satisfies HomeBlogPost[],
+    [t]
+  );
+
+  const displayHomeBlogPosts = useMemo(() => {
+    if (latestBlogPosts.length > 0) return latestBlogPosts.slice(0, 3);
+    return blogFallbackPosts.slice(0, 3);
+  }, [latestBlogPosts, blogFallbackPosts]);
+
+  useEffect(() => {
+    const fetchLatestBlog = async () => {
+      try {
+        type StrapiBlogPostItem = {
+          id: string | number;
+          attributes?: {
+            title?: string;
+            title_fr?: string | null;
+            excerpt?: string | null;
+            excerpt_fr?: string | null;
+            category?: string;
+            createdAt?: string;
+            created_at?: string;
+          };
+        };
+        const res = await strapiFetch<{ data: unknown[] }>(
+          "/api/blog-posts?filters[published][$eq]=true&sort=createdAt:desc&pagination[pageSize]=3"
+        );
+        const items = res.data || [];
+        const mapped: HomeBlogPost[] = items
+          .map((item) => {
+            const it = item as StrapiBlogPostItem;
+            return {
+              id: String(it.id),
+              title: it.attributes?.title ?? "",
+              title_fr: it.attributes?.title_fr ?? null,
+              excerpt: it.attributes?.excerpt ?? null,
+              excerpt_fr: it.attributes?.excerpt_fr ?? null,
+              category: it.attributes?.category ?? "",
+              created_at: it.attributes?.createdAt ?? it.attributes?.created_at ?? "",
+            };
+          })
+          .filter((p) => p.id && p.created_at);
+        if (mapped.length) setLatestBlogPosts(mapped);
+      } catch {
+        // fallback: blogFallbackPosts
+      } finally {
+        setBlogPostsLoading(false);
+      }
+    };
+    fetchLatestBlog();
+  }, []);
+
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -336,7 +426,10 @@ const Index = () => {
             ref={titleRef}
             className="text-4xl md:text-6xl lg:text-8xl font-bold leading-tight mb-6 text-white overflow-hidden"
           >
-            <div className="text-blue-400">UJUZI Labs</div>
+            <div>
+              <span className="text-white">UJUZI </span>
+              <span className="text-[#ffb800]">Labs</span>
+            </div>
           </h1>
           
           <p className="text-xl md:text-2xl mb-10 max-w-4xl mx-auto leading-relaxed text-white/90">
@@ -347,7 +440,12 @@ const Index = () => {
             ref={buttonsRef}
             className="flex flex-col sm:flex-row gap-6 justify-center"
           >
-            <ModernButton variant="primary" size="lg" href="/community">
+            <ModernButton
+              variant="primary"
+              size="lg"
+              href="/community"
+              className="!bg-[#ffb800] !text-[#111111] shadow-none hover:shadow-none transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.02] hover:brightness-105 focus-visible:ring-2 focus-visible:ring-[#ffb800]/60"
+            >
               <Zap className="mr-2 h-5 w-5" />
               Rejoindre la communauté
               <ArrowRight className="ml-2 h-5 w-5" />
@@ -382,52 +480,102 @@ const Index = () => {
 
       {/* About */}
       <ModernSectionWrapper className="py-24">
-        <Container size="md">
+        <Container size="lg">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="text-center"
+            className="grid lg:grid-cols-12 gap-10 items-center"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-8 text-foreground">
-              <div className="text-orange-600">Innovation Technologique Locale</div>
-            </h2>
-            <p className="text-xl leading-relaxed mb-8 text-muted-foreground">
-              <div className="text-orange-500 mb-4">UJUZI Labs est un centre d'innovation dédié au développement des technologies blockchain en RD Congo</div>
-              <div className="text-orange-400 mb-4">créant des opportunités pour la jeunesse locale</div>
-              <div className="text-orange-600">avec un focus sur l'impact social et économique durable</div>
-            </p>
-            <ModernButton variant="primary" href="/about">
-              <Globe className="mr-2 h-5 w-5" />
-              En savoir plus
-            </ModernButton>
+            <div className="lg:col-span-5">
+              <div className="relative max-w-[520px] mx-auto lg:mx-0">
+                <div className="absolute -left-6 top-2 w-[78%] h-[88%] rounded-[34px] bg-[#e8f8f7]" />
+                <div className="absolute -left-8 -bottom-8 grid grid-cols-5 gap-2 opacity-90 z-0 pointer-events-none">
+                  {Array.from({ length: 35 }).map((_, idx) => (
+                    <span key={idx} className="h-2 w-2 rounded-full bg-slate-500/80" />
+                  ))}
+                </div>
+
+                <div className="relative z-10 rounded-[34px] overflow-hidden shadow-2xl w-[78%]">
+                  <img
+                    src="/onboarding/onboarding-2.jpg"
+                    alt="Innovation technologique locale"
+                    className="w-full h-[300px] md:h-[360px] object-cover"
+                    loading="lazy"
+                  />
+                </div>
+
+                <div className="absolute z-20 right-3 top-3 h-[72px] w-[146px] rounded-2xl bg-gradient-to-br from-[#0f6be8] to-[#0a3f95] text-white shadow-xl inline-flex items-center gap-1 px-2">
+                  <span className="text-[30px] leading-none font-extrabold">+5</span>
+                  <span className="text-[9.5px] font-semibold leading-[1.06] uppercase tracking-wide opacity-95 text-right max-w-[78px]">
+                    YEARS OF
+                    <br />
+                    EXISTENCE
+                  </span>
+                </div>
+
+                <div className="absolute z-20 -right-6 bottom-8 w-[44%] h-[230px] rounded-[22px] overflow-hidden border-[8px] border-white shadow-xl bg-white">
+                  <img
+                    src="/onboarding/onboarding-4.jpg"
+                    alt="Programme d'innovation UJUZI Labs"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:col-span-7 text-center">
+              <div className="mb-6 rounded-2xl border border-border/70 bg-card/40 p-5 md:p-6">
+                <p className="text-xl md:text-[1.75rem] font-bold text-foreground leading-relaxed text-center">
+                  {innovationSentenceWords.map((word, index) => (
+                    <motion.span
+                      key={`${word}-${index}`}
+                      initial={{ opacity: 0, y: 8 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.24, delay: index * 0.035 }}
+                      className={`inline-block mr-2 ${index < 2 ? "text-[#ffb800]" : ""}`}
+                    >
+                      {word}
+                    </motion.span>
+                  ))}
+                </p>
+              </div>
+
+              <ModernButton variant="primary" href="/about" className="!bg-[#ffb800] !text-[#111111] hover:brightness-105 mx-auto">
+                <Globe className="mr-2 h-5 w-5" />
+                {t("home.learnMore")}
+              </ModernButton>
+            </div>
           </motion.div>
         </Container>
       </ModernSectionWrapper>
 
       {/* Events */}
       <ModernSectionWrapper background="gray" className="py-24">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-        >
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-foreground">
-            <div className="text-orange-600">Événements à venir</div>
-          </h2>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            {upcomingEvents.map((event, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: i * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <ModernCard className="overflow-hidden">
+        <div className="relative">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-foreground">
+              <div className="text-[#ffb800]">Événements à venir</div>
+            </h2>
+            
+            <div className="grid md:grid-cols-3 gap-8">
+              {upcomingEvents.map((event, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: i * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <ModernCard className="overflow-hidden">
                   {/* Image d'aperçu de l'événement */}
                   <div className="event-image-container">
                     <img 
@@ -436,9 +584,9 @@ const Index = () => {
                       className="event-image"
                     />
                     <div className={`event-type-badge ${
-                      i === 0 ? 'bg-orange-500' :
-                      i === 1 ? 'bg-orange-600' :
-                      'bg-orange-400'
+                      i === 0 ? 'bg-[#ffb800]' :
+                      i === 1 ? 'bg-[#ffb800]' :
+                      'bg-[#ffb800]'
                     }`}>
                       {event.type}
                     </div>
@@ -457,16 +605,16 @@ const Index = () => {
                     {/* Informations pratiques */}
                     <div className="space-y-3 mb-6">
                       <p className="flex items-center gap-2 text-muted-foreground">
-                        <Calendar className="h-4 w-4 text-orange-500" />
-                        <span className="text-orange-600">{event.date}</span>
+                        <Calendar className="h-4 w-4 text-[#ffb800]" />
+                        <span className="text-[#ffb800]">{event.date}</span>
                       </p>
                       <p className="flex items-center gap-2 text-muted-foreground">
                         <MapPin className="h-4 w-4 text-red-500" />
                         <span className="text-card-foreground">{event.location}</span>
                       </p>
                       <p className="flex items-center gap-2 text-muted-foreground">
-                        <Zap className="h-4 w-4 text-orange-500" />
-                        <span className="text-orange-600">{event.time}</span>
+                        <Zap className="h-4 w-4 text-[#ffb800]" />
+                        <span className="text-[#ffb800]">{event.time}</span>
                       </p>
                     </div>
                     
@@ -474,20 +622,22 @@ const Index = () => {
                     <ModernButton 
                       variant="primary" 
                       className={`w-full ${
-                        i === 0 ? 'bg-orange-500 hover:bg-orange-600' :
-                        i === 1 ? 'bg-orange-600 hover:bg-orange-700' :
-                        'bg-orange-400 hover:bg-orange-500'
+                        i === 0 ? 'bg-[#ffb800] hover:bg-[#e6a600]' :
+                        i === 1 ? 'bg-[#ffb800] hover:bg-[#e6a600]' :
+                        'bg-[#ffb800] hover:bg-[#e6a600]'
                       }`}
                       onClick={() => handleOpenModal(event)}
                     >
                       S'inscrire maintenant
                     </ModernButton>
                   </div>
-                </ModernCard>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+                  </ModernCard>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+        
       </ModernSectionWrapper>
 
       {/* Projects */}
@@ -499,7 +649,7 @@ const Index = () => {
           viewport={{ once: true }}
         >
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-foreground">
-            <div className="text-orange-600">Projets Innovants</div>
+            <div className="text-[#ffb800]">Projets Innovants</div>
           </h2>
           
           <div className="grid md:grid-cols-3 gap-8">
@@ -513,9 +663,9 @@ const Index = () => {
               >
                 <ModernCard className="p-8">
                   <div className={`inline-block px-4 py-2 rounded-full text-xs font-bold mb-4 ${
-                    i === 0 ? 'bg-orange-500 text-white' :
-                    i === 1 ? 'bg-orange-600 text-white' :
-                    'bg-orange-400 text-white'
+                    i === 0 ? 'bg-[#ffb800] text-[#111111]' :
+                    i === 1 ? 'bg-[#ffb800] text-[#111111]' :
+                    'bg-[#ffb800] text-[#111111]'
                   }`}>
                     {project.category}
                   </div>
@@ -528,50 +678,132 @@ const Index = () => {
         </motion.div>
       </ModernSectionWrapper>
 
-      {/* Partners */}
-      <ModernSectionWrapper background="gray" className="py-20">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="text-center"
-        >
-          <div className="mb-12">
-            <img src="/logo.png" alt="UJUZI Labs" className="h-16 mx-auto mb-6" />
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-              <div className="text-orange-600">Partenaires Stratégiques</div>
+      {/* Derniers articles blog */}
+      <ModernSectionWrapper background="gray" className="py-24">
+        <Container size="lg">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-center mb-4 text-foreground">
+              <span className="text-[#ffb800]">{t("home.latestBlogTitle")}</span>
             </h2>
-          </div>
+            <p className="text-center text-muted-foreground max-w-2xl mx-auto mb-12 text-lg">
+              {t("home.latestBlogSubtitle")}
+            </p>
 
-          <div className="relative overflow-hidden bg-gradient-to-r from-transparent via-white/5 to-transparent py-8">
-            <div className="flex animate-scroll">
+            {blogPostsLoading && latestBlogPosts.length === 0 ? (
+              <div className="grid md:grid-cols-3 gap-6">
+                {[0, 1, 2].map((i) => (
+                  <div key={i} className="h-64 rounded-xl bg-muted/50 animate-pulse" />
+                ))}
+              </div>
+            ) : (
+              <>
+                <div className="grid md:grid-cols-3 gap-6">
+                  {displayHomeBlogPosts.map((post, i) => {
+                    const isFr = i18n.language.startsWith("fr");
+                    const title = (isFr && post.title_fr ? post.title_fr : post.title) || "";
+                    const excerpt = (isFr && post.excerpt_fr ? post.excerpt_fr : post.excerpt) || "";
+                    const dateStr = post.created_at
+                      ? new Date(post.created_at).toLocaleDateString(isFr ? "fr-FR" : "en-US", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })
+                      : "";
+                    return (
+                      <motion.div
+                        key={`${post.id}-${i}`}
+                        initial={{ opacity: 0, y: 24 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: i * 0.08 }}
+                        viewport={{ once: true }}
+                      >
+                        <Link to={`/blog/${post.id}`} className="group block h-full">
+                          <ModernCard className="h-full p-6 flex flex-col border-border/80 hover:border-[#ffb800]/40 transition-colors">
+                            <span className="text-xs font-medium text-[#ffb800] bg-[#ffb800]/10 px-3 py-1 rounded-full self-start">
+                              {post.category}
+                            </span>
+                            <h3 className="font-semibold text-lg mt-4 mb-2 text-card-foreground line-clamp-2 group-hover:text-[#ffb800] transition-colors">
+                              {title}
+                            </h3>
+                            <p className="text-sm text-muted-foreground flex-1 line-clamp-3">{excerpt}</p>
+                            <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/60">
+                              <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                                <Calendar className="h-3.5 w-3.5 shrink-0" />
+                                {dateStr}
+                              </span>
+                              <span className="text-sm font-medium text-[#ffb800] flex items-center gap-1">
+                                {t("blog.readMore")}
+                                <ArrowRight className="h-4 w-4" />
+                              </span>
+                            </div>
+                          </ModernCard>
+                        </Link>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+                <div className="flex justify-center mt-12">
+                  <ModernButton
+                    variant="primary"
+                    href="/blog"
+                    size="lg"
+                    className="!bg-[#ffb800] !text-[#111111] hover:brightness-105"
+                  >
+                    {t("home.viewAllBlog")}
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </ModernButton>
+                </div>
+              </>
+            )}
+          </motion.div>
+        </Container>
+      </ModernSectionWrapper>
+
+      {/* Partenaires — même présentation que la page /partners */}
+      <section className="bg-[#1734a8] py-14 md:py-16">
+        <div className="container mx-auto px-4 text-center">
+          <motion.h2
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="font-display text-3xl md:text-4xl font-bold mb-10 md:mb-12"
+          >
+            <span className="text-white">{t("partners.title")}</span>{" "}
+            <span className="text-[#ffb800]">{t("partners.titleHighlight")}</span>
+          </motion.h2>
+
+          <div className="relative overflow-hidden py-6 md:py-8">
+            <div className="flex w-max animate-scroll gap-5 md:gap-6 pr-5 md:pr-6">
               {[...partnersList, ...partnersList].map((partner, i) => (
-                <div
-                  key={`${partner.name}-${i}`}
-                  className="flex flex-col items-center min-w-[200px] max-w-[220px] mx-4 flex-shrink-0"
-                >
+                <div key={`${partner.name}-${i}`} className="flex-shrink-0">
                   <a
                     href={partner.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex flex-col items-center"
-                    aria-label={`Visiter le site de ${partner.name}`}
+                    className="block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white rounded-2xl"
+                    aria-label={partner.name}
                   >
-                    <img
-                      src={partner.logo}
-                      alt={partner.name}
-                      className="h-16 w-auto object-contain"
-                      style={{ maxWidth: 160 }}
-                      loading="lazy"
-                    />
+                    <div className="bg-black rounded-2xl border border-white/15 p-4 md:p-5 h-[100px] w-[200px] md:h-[108px] md:w-[220px] flex items-center justify-center shadow-md shadow-black/10">
+                      <img
+                        src={partner.logo}
+                        alt=""
+                        className="max-h-[72px] w-full object-contain"
+                        loading="lazy"
+                      />
+                    </div>
                   </a>
                 </div>
               ))}
             </div>
           </div>
-        </motion.div>
-      </ModernSectionWrapper>
+        </div>
+      </section>
 
       {/* Modal d'inscription aux événements */}
       <EventRegistrationModal 
