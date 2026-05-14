@@ -145,7 +145,7 @@ export const EcosystemValidatorsSection = ({
       } satisfies ValidatorDashboard,
       stats: [],
       cta: {
-        label: "UJUZI Labs",
+        label: "Ynuka Labs",
         href: "/contact",
         external: false,
       },
@@ -177,7 +177,7 @@ export const EcosystemValidatorsSection = ({
       } satisfies ValidatorDashboard,
       stats: [],
       cta: {
-        label: "UJUZI Labs",
+        label: "Ynuka Labs",
         href: "/contact",
         external: false,
       },

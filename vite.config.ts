@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 // Configuration Vite personnalisée par Jacques MASURUKU pour GOMA HUB WEB3
 // Optimisée pour le développement rapide avec HMR et build production
@@ -12,7 +13,18 @@ export default defineConfig(({ mode }) => ({
       overlay: false,
     },
   },
-  plugins: [react()],
+  plugins: [
+    react(),
+    nodePolyfills({
+      include: ["crypto", "stream", "buffer", "process", "util", "events", "vm"],
+      globals: {
+        Buffer: true,
+        global: true,
+        process: true,
+      },
+      protocolImports: true,
+    }),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -27,7 +39,9 @@ export default defineConfig(({ mode }) => ({
         main: path.resolve(__dirname, 'index.html'),
       },
       output: {
-        manualChunks: undefined,
+        manualChunks(id) {
+          if (id.includes("node_modules/@meshsdk")) return "mesh-cardano";
+        },
       }
     }
   }

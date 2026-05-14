@@ -427,11 +427,11 @@ const About = () => {
                 </div>
 
                 <h1 className="text-3xl md:text-[42px] font-bold leading-tight text-white whitespace-nowrap">
-                  À propos de <span className="text-blue-400">UJUZI Labs</span>
+                  À propos de <span className="text-blue-400">Ynuka Labs</span>
                 </h1>
 
                 <p className="text-base md:text-lg leading-relaxed text-blue-50/90 max-w-xl text-justify">
-                  UJUZI Labs est un centre d'innovation engagé dans l'éducation et l'incubation des
+                  Ynuka Labs est un centre d'innovation engagé dans l'éducation et l'incubation des
                   talents en Afrique Centrale. Notre approche conjugue rigueur académique et
                   expérimentation terrain pour former des builders capables de concevoir, déployer et
                   améliorer des solutions Web3 responsables. En reliant la blockchain à des pratiques
@@ -472,7 +472,7 @@ const About = () => {
                 >
                   <img
                     src={heroLeft?.image ?? FALLBACK_ABOUT_HERO_BG}
-                    alt={heroLeft ? `Portrait — ${heroLeft.name}` : "Équipe UJUZI Labs"}
+                    alt={heroLeft ? `Portrait — ${heroLeft.name}` : "Équipe Ynuka Labs"}
                     className="w-full h-full object-cover object-top"
                     loading="lazy"
                   />
@@ -487,7 +487,7 @@ const About = () => {
                 >
                   <img
                     src={heroRight?.image ?? FALLBACK_ABOUT_HERO_BG}
-                    alt={heroRight ? `Portrait — ${heroRight.name}` : "Équipe UJUZI Labs"}
+                    alt={heroRight ? `Portrait — ${heroRight.name}` : "Équipe Ynuka Labs"}
                     className="w-full h-full object-cover object-center"
                     loading="lazy"
                   />
@@ -502,7 +502,7 @@ const About = () => {
                 >
                   <img
                     src="/logo.PNG"
-                    alt="Logo UJUZI Labs"
+                    alt="Logo Ynuka Labs"
                     className="block h-16 w-16 object-contain"
                     loading="lazy"
                   />
@@ -553,7 +553,7 @@ const About = () => {
             >
               {missionVisuals.map((src, i) => (
                 <div key={`${src}-${i}`} className={`mission-visual-card mission-visual-${i + 1}`}>
-                  <img src={src} alt={`Equipe UJUZI Labs ${i + 1}`} loading="lazy" />
+                  <img src={src} alt={`Equipe Ynuka Labs ${i + 1}`} loading="lazy" />
                 </div>
               ))}
             </motion.div>

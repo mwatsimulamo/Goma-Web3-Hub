@@ -1,7 +1,7 @@
 import './Ticker.css';
 
 const Ticker = () => {
-  const tickerText = "UJUZI Labs • Innovation Technologique en RDC Nord-Kivu • Blockchain pour le Futur • Développement Durable • Rejoignez la Révolution Numérique • ";
+  const tickerText = "Ynuka Labs • Innovation Technologique en RDC Nord-Kivu • Blockchain pour le Futur • Développement Durable • Rejoignez la Révolution Numérique • ";
   
   return (
     <div className="ticker-container">

@@ -65,12 +65,64 @@ const StatBentoTile = ({
   className?: string;
   variant?: "default" | "wide" | "tall";
 }) => {
-  const { count, elementRef } = useCountUp({
+  const { count, barProgress, elementRef } = useCountUp({
     end: stat.value,
     duration: 2500,
     startOnView: true,
   });
   const Icon = stat.icon;
+  const isLargeValue = stat.value >= 1000;
+
+  const numberClass = cn(
+    "font-display font-extrabold tabular-nums tracking-[-0.035em] text-[#111111] leading-[0.95]",
+    variant === "default" &&
+      (isLargeValue
+        ? "text-[clamp(1.35rem,3.8vw,2rem)] md:text-[clamp(1.5rem,3.2vw,2.15rem)]"
+        : "text-[clamp(1.5rem,4.2vw,2.2rem)] md:text-[clamp(1.65rem,3.5vw,2.45rem)]"),
+    variant === "wide" &&
+      (isLargeValue
+        ? "text-[clamp(1.45rem,3.8vw,2.1rem)] md:text-[clamp(1.6rem,3.2vw,2.35rem)]"
+        : "text-[clamp(1.65rem,4.2vw,2.35rem)] md:text-[clamp(1.85rem,3.5vw,2.65rem)]"),
+    variant === "tall" &&
+      (isLargeValue
+        ? "text-[clamp(1.3rem,3.4vw,1.85rem)] md:text-[clamp(1.45rem,2.9vw,2.1rem)] lg:text-[clamp(1.55rem,2.6vw,2.25rem)]"
+        : "text-[clamp(1.55rem,4vw,2.15rem)] md:text-[clamp(1.75rem,3.2vw,2.45rem)]")
+  );
+
+  const suffixClass = cn(
+    "font-display font-bold text-[#ffb800] tabular-nums",
+    variant === "default" && "text-[clamp(0.8rem,2vw,1.1rem)] md:text-[clamp(0.85rem,1.7vw,1.2rem)]",
+    variant === "wide" && "text-[clamp(0.85rem,2.1vw,1.15rem)] md:text-[clamp(0.9rem,1.8vw,1.25rem)]",
+    variant === "tall" && "text-[clamp(0.8rem,1.9vw,1.1rem)] md:text-[clamp(0.85rem,1.65vw,1.2rem)]"
+  );
+
+  const bar = (
+    <div
+      className={cn(
+        "w-full overflow-hidden rounded-full border border-[#111111]/10 bg-[#111111]/[0.07]",
+        variant === "default" && "mt-2 h-1 max-w-none",
+        variant === "wide" && "mt-2 h-1 md:max-w-none",
+        variant === "tall" && "mt-2 h-1.5"
+      )}
+      aria-hidden
+    >
+      <div
+        className="h-full rounded-full bg-gradient-to-r from-[#0f6be8] via-[#12B1A6] to-[#ffb800]"
+        style={{
+          width: `${Math.max(0, Math.min(100, Math.round(barProgress * 100)))}%`,
+          minWidth: barProgress > 0 ? "4px" : undefined,
+        }}
+      />
+    </div>
+  );
+
+  const labelClass = cn(
+    "font-semibold leading-snug text-[#111111]",
+    variant === "default" && "mt-2 text-[0.75rem] leading-snug md:mt-auto md:text-[0.8125rem]",
+    variant === "wide" &&
+      "mt-2 max-w-[22ch] text-[0.75rem] md:mt-0 md:flex-1 md:text-[0.8125rem] md:leading-snug lg:max-w-none lg:text-sm",
+    variant === "tall" && "mt-2 text-[0.75rem] md:mt-0 md:text-[0.8125rem] lg:max-w-[16ch]"
+  );
 
   return (
     <motion.div
@@ -85,36 +137,64 @@ const StatBentoTile = ({
     >
       <div
         className={cn(
-          "flex h-full flex-col rounded-3xl bg-[#fff8f0] p-5 text-left text-[#111111] shadow-[0_8px_30px_rgba(0,0,0,0.08)] ring-1 ring-black/[0.06] transition-shadow duration-300 hover:shadow-[0_14px_40px_rgba(0,0,0,0.12)] dark:bg-[#fff8f0] dark:ring-black/10",
-          variant === "tall" && "md:justify-between md:py-6",
-          variant === "wide" && "md:flex-row md:items-center md:gap-6 md:p-6 lg:p-7",
-          variant === "default" && "md:p-6"
+          "relative flex h-full flex-col overflow-hidden rounded-2xl bg-[#fff8f0] p-4 text-left text-[#111111] shadow-[0_6px_24px_rgba(0,0,0,0.07)] ring-1 ring-black/[0.06] transition-shadow duration-300 hover:shadow-[0_12px_32px_rgba(0,0,0,0.1)] dark:bg-[#fff8f0] dark:ring-black/10",
+          variant === "tall" && "md:justify-between md:py-4",
+          variant === "wide" && "md:flex-row md:items-center md:gap-4 md:p-5 lg:gap-5 lg:p-5",
+          variant === "default" && "md:p-5"
         )}
       >
-        <div className={cn(variant === "wide" && "md:flex md:shrink-0 md:flex-col md:items-start")}>
-          <Icon
-            className="mb-2 h-7 w-7 text-[#111111] md:h-8 md:w-8"
-            strokeWidth={2}
-            aria-hidden
-          />
-          <div
-            ref={elementRef}
-            className="font-sans text-xs font-normal tabular-nums leading-snug text-[#111111] md:text-sm"
-          >
-            {count}
-            {stat.suffix}
-          </div>
-        </div>
-        <p
+        <div
+          className="pointer-events-none absolute inset-0 z-0 opacity-[0.88]"
+          aria-hidden
+          style={{
+            backgroundImage: [
+              "linear-gradient(135deg, hsl(230 42% 58% / 0.11) 0%, transparent 46%)",
+              "linear-gradient(315deg, hsl(43 100% 50% / 0.09) 0%, transparent 42%)",
+              "linear-gradient(to right, transparent 49.5%, rgba(255,184,0,0.16) 50%, transparent 50.5%)",
+              "linear-gradient(to bottom, transparent 49.5%, rgba(255,184,0,0.16) 50%, transparent 50.5%)",
+            ].join(","),
+          }}
+        />
+        <div
           className={cn(
-            "mt-2 max-w-[22ch] font-medium leading-snug text-[#111111] md:max-w-none",
-            variant === "default" && "text-xs md:text-sm",
-            variant === "wide" && "mt-3 text-xs md:mt-0 md:flex-1 md:text-sm",
-            variant === "tall" && "text-xs md:text-sm lg:max-w-[16ch]"
+            "relative z-[1] flex min-h-0 flex-1 flex-col",
+            variant === "wide" && "md:flex-row md:items-center md:gap-4",
+            variant === "tall" && "md:justify-between"
           )}
         >
-          {stat.label}
-        </p>
+          <div
+            className={cn(
+              "flex min-h-0 flex-1 flex-col",
+              variant === "wide" && "md:flex md:shrink-0 md:flex-col md:items-start",
+              variant === "tall" && "md:justify-between"
+            )}
+          >
+            <div className="flex items-start justify-between gap-2">
+              <div className="inline-flex shrink-0 rounded-lg bg-[#111111]/[0.05] p-1.5 text-[#111111] ring-1 ring-black/[0.05]">
+                <Icon className="h-6 w-6 text-[#111111] md:h-7 md:w-7" strokeWidth={2} aria-hidden />
+              </div>
+            </div>
+
+            <div
+              ref={elementRef}
+              className={cn(
+                "mt-2 min-w-0 flex-1 md:mt-3",
+                variant === "tall" && "flex flex-col md:mt-3 md:justify-center",
+                variant === "wide" && "md:mt-3"
+              )}
+            >
+              <div className="flex flex-wrap items-baseline gap-x-1 gap-y-0">
+                <span className={numberClass}>
+                  {count}
+                  <span className={suffixClass}>{stat.suffix}</span>
+                </span>
+              </div>
+              {bar}
+            </div>
+          </div>
+
+          <p className={labelClass}>{stat.label}</p>
+        </div>
       </div>
     </motion.div>
   );
@@ -410,7 +490,7 @@ const Index = () => {
     <div className="min-h-screen text-foreground transition-colors duration-300">
       {/* Hero : même fond que la section Mission/Vision (À propos) = --background ; voile au-dessus de la vidéo */}
       <section
-        className="relative min-h-[90vh] flex items-center overflow-hidden bg-background pt-20 dark:bg-transparent"
+        className="relative min-h-[90vh] flex items-center overflow-hidden bg-background pt-6 md:pt-10 dark:bg-transparent"
         ref={heroRef}
       >
         <div className="absolute inset-0">
@@ -430,7 +510,7 @@ const Index = () => {
             }}
             allow="autoplay; encrypted-media"
             allowFullScreen
-            title="UJUZI Labs Background Video"
+            title="Ynuka Labs Background Video"
             frameBorder="0"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-blue-950/40 via-indigo-950/30 to-slate-950/35 dark:from-blue-900/80 dark:via-blue-800/70 dark:to-indigo-900/60" />
@@ -439,7 +519,7 @@ const Index = () => {
         <Container className="relative z-10 text-center">
           <div className="hero-decoration inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium mb-8 bg-white/20 backdrop-blur-md border border-white/30">
             <Star className="h-4 w-4 text-blue-400" />
-            <span className="text-blue-300">Innovation Web3 par UJUZI Labs</span>
+            <span className="text-blue-300">Innovation Web3 par Ynuka Labs</span>
           </div>
           
           <h1 
@@ -447,7 +527,7 @@ const Index = () => {
             className="text-4xl md:text-6xl lg:text-8xl font-bold leading-tight mb-6 text-white overflow-hidden"
           >
             <div>
-              <span className="text-white">UJUZI </span>
+              <span className="text-white">Ynuka </span>
               <span className="text-[#ffb800]">Labs</span>
             </div>
           </h1>
@@ -521,7 +601,7 @@ const Index = () => {
                 <div className="absolute z-20 -right-6 bottom-8 w-[44%] h-[230px] rounded-[22px] overflow-hidden border-[8px] border-white shadow-xl bg-white">
                   <img
                     src="/onboarding/onboarding-4.jpg"
-                    alt="Programme d'innovation UJUZI Labs"
+                    alt="Programme d'innovation Ynuka Labs"
                     className="w-full h-full object-cover"
                     loading="lazy"
                   />
@@ -556,8 +636,8 @@ const Index = () => {
       </ModernSectionWrapper>
 
       {/* Stats — message fort à gauche, grille bento à droite */}
-      <ModernSectionWrapper className="py-20 md:py-28">
-        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-14 xl:gap-16">
+      <ModernSectionWrapper className="py-16 md:py-20">
+        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12 xl:gap-14">
           <motion.div
             initial={{ opacity: 0, x: -28 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -588,7 +668,7 @@ const Index = () => {
             viewport={{ once: true, margin: "-60px" }}
             className="min-w-0 lg:col-span-7"
           >
-            <div className="grid auto-rows-fr grid-cols-1 gap-4 md:grid-cols-3 md:grid-rows-2 md:gap-4 lg:gap-5 md:min-h-[300px] lg:min-h-[340px]">
+            <div className="grid auto-rows-fr grid-cols-1 gap-3 md:grid-cols-3 md:grid-rows-2 md:gap-3 lg:gap-4 md:min-h-[220px] lg:min-h-[250px]">
               <StatBentoTile
                 stat={stats[0]}
                 delay={0}

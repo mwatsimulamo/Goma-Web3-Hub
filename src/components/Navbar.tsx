@@ -261,7 +261,7 @@ const Navbar = () => {
 
   const isGroupActive = (group: NavGroup) => group.items.some((item) => isActive(item.path));
 
-  /* Liens menu : inactifs en noir, actifs en or UJUZI */
+  /* Liens menu : inactifs en noir, actifs en or Ynuka */
   const linkBase =
     "px-4 py-2.5 text-base font-bold rounded-xl transition-colors whitespace-nowrap md:px-5 md:py-3 md:text-[1.0625rem]";
   const linkActive = "text-[#ffb800] bg-[#ffb800]/12";
@@ -288,7 +288,7 @@ const Navbar = () => {
   );
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 relative isolate">
+    <header className="sticky top-0 z-50 w-full shrink-0 isolate">
       {/*
         Bandeau : mail à gauche dans la case jaune | icônes à droite, puis extension jaune | fond.
       */}
@@ -331,9 +331,9 @@ const Navbar = () => {
           )}
         >
           <Link to="/" className="flex shrink-0 items-center gap-3 md:gap-3.5">
-            <img src={logo} alt="UJUZI Labs" className="h-11 w-11 md:h-14 md:w-14" />
+            <img src={logo} alt="Ynuka Labs" className="h-11 w-11 md:h-14 md:w-14" />
             <span className="font-display text-xl font-bold tracking-tight text-slate-800 dark:text-white md:text-2xl">
-              UJUZI <span style={{ color: GOLD }}>Labs</span>
+              Ynuka <span style={{ color: GOLD }}>Labs</span>
             </span>
           </Link>
 

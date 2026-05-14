@@ -52,7 +52,7 @@ function EventSlideCard({
             variant === "dark" ? "text-white/70" : variant === "image" ? "text-white/80" : "text-[#2563eb]/85"
           )}
         >
-          UJUZI Labs
+          Ynuka Labs
         </p>
         <span
           className={cn(

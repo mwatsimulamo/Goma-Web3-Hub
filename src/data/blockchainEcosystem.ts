@@ -41,7 +41,7 @@ const en: Record<BlockchainId, ChainContent> = {
     name: "Cardano",
     tagline: "Research-driven L1 — education, stake pools & native assets",
     description:
-      "Cardano is UJUZI Labs’ primary chain for production programs: stake-pool operations, Catalyst-aligned innovation, and sustainability-linked digital assets.",
+      "Cardano is Ynuka Labs’ primary chain for production programs: stake-pool operations, Catalyst-aligned innovation, and sustainability-linked digital assets.",
     logoUrl: "https://cdn.jsdelivr.net/npm/cryptocurrency-icons@0.18.1/svg/color/ada.svg",
     websiteUrl: "https://www.cardano.org",
     accent: "from-emerald-500/25 to-teal-600/10",
@@ -113,7 +113,7 @@ const en: Record<BlockchainId, ChainContent> = {
     name: "Apex Fusion",
     tagline: "Cross-chain protocol — validators & interoperability",
     description:
-      "UJUZI Labs operates validator infrastructure for Apex Fusion, supporting secure cross-chain messaging and ecosystem growth from Central Africa.",
+      "Ynuka Labs operates validator infrastructure for Apex Fusion, supporting secure cross-chain messaging and ecosystem growth from Central Africa.",
     logoUrl: "/partners/apex.png",
     websiteUrl: "https://www.apexfusion.org",
     accent: "from-cyan-500/25 to-blue-700/15",
@@ -185,7 +185,7 @@ const en: Record<BlockchainId, ChainContent> = {
     name: "Midnight",
     tagline: "Data protection blockchain — privacy-preserving DApps",
     description:
-      "Midnight supports compliant, privacy-first applications. UJUZI Labs explores how selective disclosure and ZK techniques serve NGOs, identity, and regulated pilots.",
+      "Midnight supports compliant, privacy-first applications. Ynuka Labs explores how selective disclosure and ZK techniques serve NGOs, identity, and regulated pilots.",
     logoUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAMAAACahl6sAAAAeFBMVEUKCgr////8/PwICAgNDQ3R0dH5+fmKiooZGRk5OTkRERHCwsKRkZHb29vo6OhUVFTy8vLLy8uDg4N1dXUjIyPi4uIuLi6qqqq8vLw2NjZmZmacnJxeXl5KSkrn5+dGRkZ5eXkqKiqysrI/Pz8eHh5ra2ujo6OGhobjpUUPAAAJVklEQVR4nO1dCXuiPBAmyRiQS/CqVm3t/f//4ZdAJYMiJJSA+z159+p2JeQlcyXMzHqeg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg22A/AXFl2zamQyAgoziwTzA//KPQEwf1qdV/BQlLxmnlGcvSfQUr07rf4qGFyz8XUYoJfJHBSpAsshfBFPPrxtSkPY/OSetoPlyX64LPKQKgQds7yd4Ee4x4STx96zUoocDsPBrRgt0EqGcc5o/B4+4Hmztp4VaaBEp+ab+euppIxRPla3jrFukGlbm8CZF8mHcTSBoaKzELRNOszh4DD0Rswi/UioV2JxHIWTpCuABlB7YPBciQjWMVRMTSYXn+6lZCAsa+vyWAqJF8R+UkCbGlPvhpGsieGxnDUIln7I0YDzZfcfL82p1Xsbfu0Qw5vIfbpiI74lFmZTJc6OSl6HIcQvsV/iZdH4Mtkc/KkKX2wWk2fOETOBAOGkgksQnISrsKtwtfw9PcdJAXIxyCKdh4XmfEVKPYmUKLxfPuy6cx+lvSKkegpDG6HOMWV9DqEciJb4mH5RGR43nKkzEMaLlQiiFFyq1nUK85ikXWs6ReHC6O+lP5GPHsX6JLzhPOxdzeHwIrSU1y8ujVxlo6FJh3kdEkcUr7Fn6YXPOTSh41FZjc7z9VAcpOG4Ek9o42QeMGnbNM4o8m9zMHoKmaZ/jCuemcYKD1A1sv7JRpestrW9j+eaOcuRqjnnjB+C04bUogKZbmzOv4zO5iq3e5Ta8QSYgV5Oc3VItLgjer/b1yUhWmEEYYScovj7fVYaZmuPs7ojL2nCERuEYRliE3AdsNsWOYtG0GCU0iDBgi4wiMy58/OV0zyrgubCUFZGXectNtVbEg/kLxUTI8xhLss04Rx55s23bqOoR8WC7wURoZlnh5bFnmNfCis1b6xWaRIQd3NQUJQ+tnhSBEGi/puepDNVbPJgeETEEbFPkTzj1PWaRCAPYY8NbeK9WT6y5InLfMs/wE+K2/WJe2+EtBIvWiEJXR+SvBVoQsWW0eiABK2R2OVl2hUUwww6x69NLgsIVvhpq0k0IUnUjSt6FWHVMLkDoDCG9d7T/p6nNQ3sf3SjbBN3ng2i72/1ZL9hkyJ/E9sLgtwyb3pPGFYDeWGnghAJImtk6GJaxSWmxiuOeg4Yuwt2/NILBQe0OxJL0nmrHpD5VZMLJJhje0AMLNqS6iViSVh/VG6zyhXJ//WzhDvKg7BL+yKXxbdAAYbIuZw1iZxvpWfntvIJG+CRdR3SRLXmyZOWkS0S9yPNqHhJox1oVXvGO7cuGT2Rot0d2mheZE/F26HnlNmRrj2Is+qp5hx5ETvisy8b7Bh9H2boX9SDioZW3ou4Jkt2jruz2IXJEqpj0nGwL5ih817cmfYiEqRItOnw0v0THaPpRUA8iwGJE5KfndO8jRyui/5jMiYhnNEdEtLVRExBcWFATwYWZCvsbDujuIVEPjQcDRykL9ZSIQTCHN1b6V8XIriwG5cHAV6aEvOpfh4noz+iEvLvfZ753ASxSJjHTj4DguKqgbbKF3ULnEFGf+bagMonDD92ASN0tHTbcWiOpHXaxG6EEmdD1oEpyUgPThjdTQ+OIjpxOg5qtFXpEI7yI2aK4bthjoVgNzA12O4Z79gphrzBCB0/KjCYmA/fVVJUcQZ96DtEMZUao7p5KAp5mFQwmxGBnyf4ylD7ybXKhcogi1jJYnm91PyMJ6AR6oxSb5B/2CeMFQAUpNDWebNvAyNV2nlxj9CTCluq6zHSybQBkRc4mF/Yk4p3Vddzkuk4gx25k1/sSWSFHMmSMAuMSgZoDNp1s68jjihbURGvQqDFTA4+g7FBT9kGJoCg+Nhn47+aXDGp+ezpEYNghmryGsOYQ0U5nZzCfniGKB+gAeNh9nAoaidHh36MFjWyAMN5EQmphvMF13cAOatyNlZnf6gJMudUddOQpDx8GHRmUI6EjHwfZG9rggK4nQpSYEA38FhwfmQ4rtQ3AL0T9YQ+xmcpBIrYyEhRiopgsBh2ZQYCS2C28D6sjUTlhdPCauKsXPTYT2G2+6PG8H0QktplviMMIwpeDD79HKYB2UisusPwyFBLkbW06d1Cvp62oI0N5shYkFyFHcZ2NKKKWwmHPlbBXlK5O9haMCkqqIdpJNT2wQw8st2JVvpDsGrwQNcQHLmu0k+wfpiq3n2omnplB5t5Hl6Ir4YHTzhTbfrfxqUrTs5QK6B25qlO2kwrIgK2z6haWkjM9mZxZWRT+aSurPFbZmZQeLGSAwqGqrha3OFjLjl8bJzAb4oRLZrP20pS/gMWmKeVGo1+llNvcUt8k+Q85uEzyR7W/L1Y781yVXQw7+BKX7nIrqbK/AFkhie+2GKijyVUhjLyH0XuhHphzXGOVzUGjnqIbV6VJsl2E3R4QYtJ+raarq1hMDzfFYkLTgVktTfJk+R4WgY7yPW3UyvcomYVWN6EFtlmtY1N7QaUOmOzPgQsqufWCygJXJa60KHHtX1srr4R5iptYjFPi2lR0/Cc1uSk65hZjkxogjOr9Dej5bwOeCcW1VbIMvKuabiB8JvX+NLQozDfXFKnQ8PlOCH4qfKzCfIltIdMogLzXKqETcNrUWooQmtqLFRswz/CKyEYvhx6hkdh/HGQ3Orwi4zavYPBRa2ZUthMxX5SynQjSD5KN3xglpbUGL8IiRx+aagJldHWqG41pGrxcWu7UWhzQ3aveqkjn8bqrPQleRDwTtNz5bYKEpLv4KZsgaZCRTZCkciD/UTZBmgSyLRVekWIrb9CWitTaUvGJ2lJJhIWPv23dVjQKk7heG3avUVh5mjE+g2piXa3bLvXTcsNRtW67/nihX9mz/Xj3Pg/ZTK+RSNHa6LaZXvntBiJktp20e2Zre8PfkluC/rj9ZPlt2d5weux/G1rcmWUraOE+8vmEYnWBEH1YpWUrPXMi0gKnX3a7uRgAAj+jDRLWuR5SyeMH6SzNyqf5duC3St/NJIvLgp0H6ZJboGxcrNmBuWpc/EgMLmDBc170iNYkMvsa4ajEHMVhYdHcW0NZ6G9z7wfkoTr175d5BxOe/0ze4FcPwaLsIlvb15chZbb7JxrgVxCr0/xfEjxOH28doP64V/9JxCMqRR/A/4mMg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4PDI+M/Y9hWC5ZtdjUAAAAASUVORK5CYII=",
     websiteUrl: "https://midnight.network",
     accent: "from-slate-600/40 to-indigo-950/40",
@@ -257,7 +257,7 @@ const en: Record<BlockchainId, ChainContent> = {
     name: "Safrochain",
     tagline: "Africa-focused L1 — validators & local ecosystem",
     description:
-      "Safrochain anchors UJUZI Labs’ commitment to African-led infrastructure: validator participation, community onboarding, and use cases that fit regional realities.",
+      "Safrochain anchors Ynuka Labs’ commitment to African-led infrastructure: validator participation, community onboarding, and use cases that fit regional realities.",
     logoUrl: "https://safrochain.com/lovable-uploads/b0a413cc-c8cb-4914-ae6f-a2cc1556efc5.png",
     websiteUrl: "https://safrochain.com",
     accent: "from-green-600/25 to-emerald-900/20",
@@ -296,7 +296,7 @@ const fr: Record<BlockchainId, ChainContent> = {
     name: "Cardano",
     tagline: "L1 orientée recherche — formation, stake pools & actifs natifs",
     description:
-      "Cardano est la chaîne principale d’UJUZI Labs : stake pools, innovation alignée Catalyst et actifs numériques liés à la durabilité.",
+      "Cardano est la chaîne principale de Ynuka Labs : stake pools, innovation alignée Catalyst et actifs numériques liés à la durabilité.",
     logoUrl: en.cardano.logoUrl,
     websiteUrl: en.cardano.websiteUrl,
     accent: en.cardano.accent,
@@ -368,7 +368,7 @@ const fr: Record<BlockchainId, ChainContent> = {
     name: "Apex Fusion",
     tagline: "Protocole cross-chain — validateurs & interopérabilité",
     description:
-      "UJUZI Labs exploite une infrastructure validateur pour Apex Fusion, au service de la messagerie cross-chain sécurisée et de l’écosystème depuis l’Afrique centrale.",
+      "Ynuka Labs exploite une infrastructure validateur pour Apex Fusion, au service de la messagerie cross-chain sécurisée et de l’écosystème depuis l’Afrique centrale.",
     logoUrl: en.apexFusion.logoUrl,
     websiteUrl: en.apexFusion.websiteUrl,
     accent: en.apexFusion.accent,
@@ -440,7 +440,7 @@ const fr: Record<BlockchainId, ChainContent> = {
     name: "Midnight",
     tagline: "Blockchain de protection des données — DApps respectueuses de la vie privée",
     description:
-      "Midnight permet des applications conformes et orientées confidentialité. UJUZI Labs explore la divulgation sélective et les ZK pour ONG, identité et pilotes régulés.",
+      "Midnight permet des applications conformes et orientées confidentialité. Ynuka Labs explore la divulgation sélective et les ZK pour ONG, identité et pilotes régulés.",
     logoUrl: en.midnight.logoUrl,
     websiteUrl: en.midnight.websiteUrl,
     accent: en.midnight.accent,
@@ -512,7 +512,7 @@ const fr: Record<BlockchainId, ChainContent> = {
     name: "Safrochain",
     tagline: "L1 tournée vers l’Afrique — validateurs & écosystème local",
     description:
-      "Safrochain incarne l’engagement d’UJUZI Labs pour une infrastructure africaine : participation validateur, onboarding communautaire et cas d’usage adaptés à la région.",
+      "Safrochain incarne l’engagement de Ynuka Labs pour une infrastructure africaine : participation validateur, onboarding communautaire et cas d’usage adaptés à la région.",
     logoUrl: "https://safrochain.com/lovable-uploads/b0a413cc-c8cb-4914-ae6f-a2cc1556efc5.png",
     websiteUrl: en.safrochain.websiteUrl,
     accent: en.safrochain.accent,
@@ -555,7 +555,7 @@ export const blockchainEcosystemUi = {
   en: {
     sectionTitle: "Blockchain ecosystems",
     sectionKicker: "Networks we work with",
-    hint: "Select a network to see how UJUZI Labs engages with it.",
+    hint: "Select a network to see how Ynuka Labs engages with it.",
     sheetEyebrow: "Network detail",
     whatWeDo: "What we do with this blockchain",
     visitSite: "Visit site",
@@ -563,7 +563,7 @@ export const blockchainEcosystemUi = {
   fr: {
     sectionTitle: "Écosystèmes blockchain",
     sectionKicker: "Réseaux avec lesquels nous travaillons",
-    hint: "Choisissez un réseau pour voir comment UJUZI Labs s’y engage.",
+    hint: "Choisissez un réseau pour voir comment Ynuka Labs s’y engage.",
     sheetEyebrow: "Détail du réseau",
     whatWeDo: "Ce que nous faisons sur cette blockchain",
     visitSite: "Visiter le site",

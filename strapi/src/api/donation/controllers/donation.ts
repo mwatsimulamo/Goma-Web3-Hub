@@ -169,6 +169,50 @@ export default {
     }
   },
 
+  async rdcMobileIntent(ctx: any) {
+    try {
+      const body = (ctx.request.body ?? {}) as {
+        donor_name?: string;
+        donor_email?: string;
+        donor_phone?: string;
+        amount?: string | number;
+        currency?: string;
+        operator?: string;
+        note?: string;
+      };
+
+      const allowed = ["orange", "airtel", "vodacom", "africel"];
+      const op = String(body.operator ?? "").toLowerCase();
+      if (!allowed.includes(op)) {
+        return ctx.badRequest("Invalid operator");
+      }
+
+      const donation = await strapi.db.query(DONATION_UID).create({
+        data: {
+          method: "mobile_money",
+          provider: "rdc-operator",
+          network: op,
+          status: "manual_review",
+          amount: Number(body.amount ?? 0),
+          currency: String(body.currency ?? "USD"),
+          donor_name: String(body.donor_name ?? ""),
+          donor_email: String(body.donor_email ?? ""),
+          donor_phone: String(body.donor_phone ?? ""),
+          note: String(body.note ?? "RDC Mobile Money — demande depuis onboarding"),
+          raw_payload: body,
+        },
+      });
+
+      ctx.body = {
+        ok: true,
+        donationId: donation?.id ?? null,
+      };
+    } catch (error: any) {
+      strapi.log.error("rdcMobileIntent error", error);
+      ctx.internalServerError(error?.message ?? "RDC mobile intent failed");
+    }
+  },
+
   async cryptoIntent(ctx: any) {
     try {
       const body = (ctx.request.body ?? {}) as {

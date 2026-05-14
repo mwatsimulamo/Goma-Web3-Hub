@@ -104,7 +104,7 @@ const Footer = () => {
   const devMailto = `mailto:${devEmail}?subject=${encodeURIComponent(
     "Demande de site web moderne pour mon entreprise"
   )}&body=${encodeURIComponent(
-    "Bonjour UJUZI Labs Team,\nBonjour Jacques\n\nJ'ai visité votre site et je l'apprécie tellement. Pouvez-vous me concevoir aussi un site web moderne pour mon entreprise ?\n\nMerci."
+    "Bonjour Ynuka Labs Team,\nBonjour Jacques\n\nJ'ai visité votre site et je l'apprécie tellement. Pouvez-vous me concevoir aussi un site web moderne pour mon entreprise ?\n\nMerci."
   )}`;
 
   return (
@@ -114,7 +114,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <h3 className="font-display text-xl font-bold text-foreground">
-              UJUZI <span className="text-[#ffb800]">Labs</span>
+              Ynuka <span className="text-[#ffb800]">Labs</span>
             </h3>
             <div className="flex items-center gap-2 text-muted-foreground">
               <MapPin className="h-4 w-4" />
@@ -273,7 +273,7 @@ const Footer = () => {
 
         <div className="mt-16 pt-8 border-t border-border">
           <p className="text-sm text-muted-foreground flex flex-col items-center gap-2 text-center sm:flex-row sm:justify-between sm:items-center sm:text-left">
-            <span className="w-full sm:w-auto">© {new Date().getFullYear()} UJUZI Labs. {t("footer.rights")}</span>
+            <span className="w-full sm:w-auto">© {new Date().getFullYear()} Ynuka Labs. {t("footer.rights")}</span>
             <span className="w-full sm:w-auto sm:text-right">
               Developped by{" "}
               <a
@@ -281,7 +281,7 @@ const Footer = () => {
                 className="text-foreground hover:text-[#ffb800] transition-colors hover:underline underline-offset-4"
                 title="Envoyer une demande de création de site web moderne"
               >
-                UJUZI Labs Developpers Team
+                Ynuka Labs Developpers Team
               </a>
             </span>
           </p>

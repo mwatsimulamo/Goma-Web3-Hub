@@ -189,7 +189,7 @@ const Partners = () => {
               <Card className="shadow-xl border-none animate-fade-in">
                 <CardHeader>
                   <CardTitle className="text-center text-2xl font-bold mb-2">
-                    Become a partner at UJUZI Labs
+                    Become a partner at Ynuka Labs
                   </CardTitle>
                 </CardHeader>
                 <CardContent>

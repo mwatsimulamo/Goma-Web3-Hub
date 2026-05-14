@@ -197,7 +197,7 @@ const Index = () => {
                     </p>
                     <p className="text-gray-700 flex items-center gap-2">
                       <MapPin className="h-4 w-4 text-red-500" />
-                      <span className="text-purple-600">{event.location.replace('Goma Hub HQ', 'UJUZI Labs HQ')}</span>
+                      <span className="text-purple-600">{event.location.replace('Goma Hub HQ', 'Ynuka Labs HQ')}</span>
                     </p>
                     <p className="text-gray-700 flex items-center gap-2">
                       <Zap className="h-4 w-4 text-yellow-500" />

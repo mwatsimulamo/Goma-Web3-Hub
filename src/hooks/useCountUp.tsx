@@ -12,6 +12,7 @@ export const useCountUp = ({
   startOnView = true 
 }: UseCountUpProps) => {
   const [count, setCount] = useState(0);
+  const [barProgress, setBarProgress] = useState(0);
   const [isVisible, setIsVisible] = useState(!startOnView);
   const elementRef = useRef<HTMLDivElement>(null);
 
@@ -23,18 +24,20 @@ export const useCountUp = ({
 
     const animate = () => {
       const now = Date.now();
-      const progress = Math.min((now - startTime) / duration, 1);
+      const t = Math.min((now - startTime) / duration, 1);
       
       // Easing function for smooth animation
-      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+      const easeOutQuart = 1 - Math.pow(1 - t, 4);
       const currentCount = Math.floor(easeOutQuart * end);
       
       setCount(currentCount);
+      setBarProgress(easeOutQuart);
 
       if (now < endTime) {
         requestAnimationFrame(animate);
       } else {
         setCount(end);
+        setBarProgress(1);
       }
     };
 
@@ -59,5 +62,5 @@ export const useCountUp = ({
     return () => observer.disconnect();
   }, [startOnView]);
 
-  return { count, elementRef };
+  return { count, barProgress, elementRef };
 };

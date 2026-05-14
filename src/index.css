@@ -125,6 +125,10 @@
     transition: background-color 0.3s, color 0.3s;
   }
 
+  html {
+    scroll-padding-top: 9rem;
+  }
+
   /* Texture organique : désactivée (motif retiré de l'ensemble du site). */
 
   h1,

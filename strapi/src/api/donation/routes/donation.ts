@@ -24,5 +24,13 @@ export default {
         auth: false,
       },
     },
+    {
+      method: "POST",
+      path: "/donations/rdc-mobile-intent",
+      handler: "donation.rdcMobileIntent",
+      config: {
+        auth: false,
+      },
+    },
   ],
 };

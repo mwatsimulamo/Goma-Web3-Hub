@@ -97,7 +97,7 @@ const EventVisualCard = ({
             <img src={logo} alt="" className="h-8 w-8 shrink-0 object-contain md:h-9 md:w-9" />
             <div className="min-w-0">
               <p className="truncate text-xs font-bold uppercase tracking-wider text-white/70">
-                UJUZI Labs
+                Ynuka Labs
               </p>
               <span className="inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold bg-[#ffb800] text-[#1e3a8a]">
                 {event.type}

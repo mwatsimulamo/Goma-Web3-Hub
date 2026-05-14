@@ -84,7 +84,7 @@ const Resources = () => {
       subtitle: "Nos images de l'Onboarding Program",
       date: "2022-2025",
       description:
-        "Voici les images de l'Onboarding Program de UJUZI Labs Web3 qui est un programme de formation sur le Web3 pour les nouveaux membres de la communauté.",
+        "Voici les images de l'Onboarding Program de Ynuka Labs Web3 qui est un programme de formation sur le Web3 pour les nouveaux membres de la communauté.",
       images: Array.from({ length: 6 }).map((_, i) => ({
         alt: `Wada Burkina Faso Hub — photo ${i + 1}`,
         imageUrl: `${RESOURCES_GALLERY_BASE_PATH}/cardano-summit-2022/photo-${i + 1}.jpg`,
@@ -92,10 +92,10 @@ const Resources = () => {
     },
     {
       title: "Hackathons et Evénements",
-      subtitle: "Les Hackathons et les événements de UJUZI Labs Web3",
+      subtitle: "Les Hackathons et les événements de Ynuka Labs Web3",
       date: "2026",
       description:
-        "Voici les images des Hackathons et des événements de UJUZI Labs Web3 et les projets Cardano, Ujuzi Labs et les autres projets de la communauté a participé à des Hackathons et des événements organisés localement à Goma et à Nairobi, Kenya.",
+        "Voici les images des Hackathons et des événements de Ynuka Labs Web3 et les projets Cardano, Ynuka Labs et les autres projets de la communauté a participé à des Hackathons et des événements organisés localement à Goma et à Nairobi, Kenya.",
       images: Array.from({ length: 6 }).map((_, i) => ({
         alt: `Inauguration — photo ${i + 1}`,
         imageUrl: `${RESOURCES_GALLERY_BASE_PATH}/cardano-africa-tech-summit/photo-${i + 1}.jpg`,

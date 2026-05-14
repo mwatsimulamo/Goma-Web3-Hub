@@ -141,7 +141,7 @@ const Projects = () => {
             </h1>
             <p className="text-white/90 max-w-2xl mx-auto text-lg font-bold">
               Des solutions Web3 innovantes, des projets environnementaux, hackathons et
-              programmes d'education construits et incubes par UJUZI Labs.
+              programmes d'education construits et incubes par Ynuka Labs.
             </p>
           </motion.div>
         </div>

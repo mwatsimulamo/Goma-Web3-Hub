@@ -8,7 +8,7 @@ export type SocialLinkItem = {
   iconClassName: string;
 };
 
-/** Mêmes URLs et icônes que le footer — réseaux UJUZI Labs */
+/** Mêmes URLs et icônes que le footer — réseaux Ynuka Labs */
 export const socialLinks: SocialLinkItem[] = [
   {
     href: "https://x.com/StakeGoma",
